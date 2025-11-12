@@ -1,7 +1,7 @@
 # Summer Maxxing - Game Design Document
 
 ## Game Overview
-**Summer Maxxing** is a humorous text-based RPG where players attempt to optimize their summer break by balancing relationships, fitness, finances, and academics. The goal is to survive the 90-day summer period while achieving the best possible outcome based on player choices.
+**Summer Maxxing** is a humorous text-based RPG where players attempt to optimize their summer break by balancing relationships, fitness, finances, and academics. The goal is to survive the 12-week (48-scenario) summer period while achieving the best possible outcome based on player choices.
 
 ## Core Game Mechanics
 
@@ -16,37 +16,37 @@ Players must manage five core stats that interact with each other:
 - **Fitness Level (0-100)**: Affects health, energy efficiency, and relationship opportunities
 
 ### 2. Time Management
-- Each day is divided into 4 time slots: Morning, Afternoon, Evening, Night
-- Players can perform 1 major activity per time slot
-- Some activities span multiple time slots
-- Weekends have different available activities
+- Each week is divided into 4 scenarios (Scenario 1 - Scenario 4; analogous to Morning/Afternoon/Evening/Night)
+- Players can perform 1 major activity per scenario
+- Some activities span multiple scenarios
+- Certain scenarios (e.g., weekend-style scenarios) have different available activities
 
 ### 3. Location & Activities
 
 #### **Gym** 
-- **Work Out** (2 hrs, -30 Energy, +5-8 Fitness, -$5)
-- **Protein Shake** (30 min, -$8, +10 Health)
-- **Flirt with Gym Crush** (1 hr, -10 Energy, varies Social outcome)
+- **Work Out** (1 scenario, -30 Energy, +5-8 Fitness, -$5)
+- **Protein Shake** (quick action, no scenario cost, -$8, +10 Health)
+- **Flirt with Gym Crush** (1 scenario, -10 Energy, varies Social outcome)
 
 #### **University Hall**
-- **Attend Class** (2 hrs, -20 Energy, +10-15 Academic)
-- **Study Group** (3 hrs, -25 Energy, +15-20 Academic, +5 Social)
-- **Club Activities** (2 hrs, -15 Energy, +10-15 Social)
+- **Attend Class** (1 scenario, -20 Energy, +10-15 Academic)
+- **Study Group** (1-2 scenarios, -25 Energy, +15-20 Academic, +5 Social)
+- **Club Activities** (1 scenario, -15 Energy, +10-15 Social)
 
 #### **Room**
-- **Sleep** (8 hrs, +50 Energy)
-- **Study Alone** (4 hrs, -30 Energy, +10-15 Academic)
-- **Online Side Hustle** (3 hrs, -20 Energy, +$20-40)
-- **Gaming Marathon** (4 hrs, -15 Energy, +5 Social (online), -5 Academic)
+- **Sleep** (1 scenario, +50 Energy)
+- **Study Alone** (1 scenario, -30 Energy, +10-15 Academic)
+- **Online Side Hustle** (1 scenario, -20 Energy, +$20-40)
+- **Gaming Marathon** (1 scenario, -15 Energy, +5 Social (online), -5 Academic)
 
 #### **Cafeteria**
-- **Healthy Meal** (1 hr, -$12, +15 Health)
-- **Cheap Fast Food** (30 min, -$5, +5 Health, risk of -2 Fitness)
-- **Coffee Date** (1.5 hrs, -$15, varies Social outcome)
+- **Healthy Meal** (1 scenario, -$12, +15 Health)
+- **Cheap Fast Food** (quick action, no scenario cost, -$5, +5 Health, risk of -2 Fitness)
+- **Coffee Date** (1 scenario, -$15, varies Social outcome)
 
-#### **Interview Room** (Available after day 30)
-- **Internship Interview** (2 hrs, -25 Energy, success based on Academic + Fitness)
-- **Part-time Job Interview** (1 hr, -15 Energy, immediate income if successful)
+#### **Interview Room** (Available after week 5)
+- **Internship Interview** (1 scenario, -25 Energy, success based on Academic + Fitness)
+- **Part-time Job Interview** (1 scenario, -15 Energy, immediate income if successful)
 
 ### 4. Relationship System
 
@@ -85,20 +85,20 @@ Players must manage five core stats that interact with each other:
 #### Positive Events:
 - **Inheritance**: +$500 (5% chance per week)
 - **Gym Equipment Sale**: -50% on gym costs (10% chance)
-- **Study Breakthrough**: +20 Academic (15% chance when studying)
+- **Study Breakthrough**: +20 Academic (15% chance when studying during a scenario)
 - **Unexpected Date**: +30 Social Points (20% chance with high social)
 
 #### Negative Events:
 - **Sports Injury**: -20 Health, -10 Fitness, -$100 medical bill
 - **Financial Emergency**: -$200 (family issues)
-- **Food Poisoning**: -15 Health, -2 days energy regeneration
+- **Food Poisoning**: -15 Health, -2 scenarios energy regeneration
 - **Academic Crisis**: -15 Academic Performance
 - **Social Drama**: -20 Social Points
 
 #### Neutral Events:
 - **Weather Change**: Affects outdoor activity efficiency
-- **Internet Outage**: Online activities unavailable for 1 day
-- **Gym Closure**: 1 day maintenance
+- **Internet Outage**: Online activities unavailable for 1 week (all scenarios)
+- **Gym Closure**: 1 scenario maintenance
 
 ### 7. Difficulty Levels
 
@@ -154,12 +154,12 @@ Players must manage five core stats that interact with each other:
 ## Technical Implementation Notes
 
 ### Required Features per COMP2113 Guidelines:
-1. **Random Events**: Implemented through daily event generation system
-2. **Data Structures**: Player stats, relationship tracking, activity queues
+1. **Random Events**: Implemented through weekly event generation system (events evaluated per week and/or per scenario as needed)
+2. **Data Structures**: Player stats, relationship tracking, activity queues keyed by week and scenario
 3. **Dynamic Memory Management**: Character relationship arrays, event systems
-4. **File I/O**: Save/load game state, high score tracking
+4. **File I/O**: Save/load game state, high score tracking (track current week and scenario)
 5. **Multiple Files**: Separate modules for game logic, UI, events, relationships
-6. **Multiple Difficulty Levels**: Three distinct difficulty modes with different starting conditions
+6. **Multiple Difficulty Levels**: Three distinct difficulty modes with different starting conditions (weeks and scenario progression instead of days/time slots)
 
 ### File Structure:
 - `main.cpp`: Game loop and primary interface
@@ -177,3 +177,4 @@ Players must manage five core stats that interact with each other:
 - Dynamic arrays for relationship tracking
 - Random number generation for events
 - String manipulation for text-based interface
+
