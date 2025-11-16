@@ -2,7 +2,7 @@
 
 A small, terminal-based life-sim for COMP2113/ENGG1340. You play through a summer break, balancing Energy, Health, Social, Academic, Fitness, and Money across 12 weeks, with 4 scenarios each week (48 scenarios total).
 
-## What’s Here (current state)
+## Features
 - Stats system: Energy, Health, Social, Academic, Fitness, Money
 - Time system: 12 weeks × 4 scenarios per week (48 scenarios)
 - Basic activities (placeholder): e.g. Sleep, Workout, Healthy Meal
@@ -53,9 +53,10 @@ If `make` isn’t available on your system, just use the direct `g++` command ab
 - End-of-summer summary/outcomes
 
 ## Team
-- Add team member names and GitHub IDs here
+- [Add team member names and GitHub IDs here!]
 
 ## Notes
 - No non-standard runtime libraries are required. Standard C++17 only.
-- Should compile on the Academy server with `g++`.
+- The code should be able to compile on the Academy server with `g++`.
+
 
