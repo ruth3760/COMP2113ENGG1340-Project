@@ -1,6 +1,7 @@
 #include "player.h"
 #include <algorithm>
 #include <iostream>
+#include <string>
 
 Player::Player(int energy_, int health_, int social_, int academic_, int fitness_, int money_)
     : energy(energy_), health(health_), social(social_), academic(academic_), fitness(fitness_), money(money_)
@@ -26,10 +27,21 @@ void Player::clampStats()
 
 void Player::printStats() const
 {
-    std::cout << "[Stats] Energy:" << energy
-              << " Health:" << health
-              << " Social:" << social
-              << " Academic:" << academic
-              << " Fitness:" << fitness
-              << " Money:$" << money << "\n";
+    auto barFor = [](int value) {
+        int clamped = std::max(0, std::min(100, value));
+        int filled = clamped / 10; // 0-10 segments
+        std::string bar(10, '-');
+        for (int i = 0; i < filled; ++i) {
+            bar[i] = '#';
+        }
+        return bar;
+    };
+
+    std::cout << "==== CURRENT STATS ====\n";
+    std::cout << "Energy   [" << barFor(energy)   << "] " << energy   << "\n";
+    std::cout << "Health   [" << barFor(health)   << "] " << health   << "\n";
+    std::cout << "Social   [" << barFor(social)   << "] " << social   << "\n";
+    std::cout << "Academic [" << barFor(academic) << "] " << academic << "\n";
+    std::cout << "Fitness  [" << barFor(fitness)  << "] " << fitness  << "\n";
+    std::cout << "Money    [$" << money << "]\n";
 }

@@ -191,7 +191,7 @@ void enforceCriticalRules(GameState& state, Player& player)
 // Input: Relationships container. Output: formatted text to stdout.
 void printRelationships(const Relationships& rels)
 {
-    std::cout << "Relationships:\n";
+    std::cout << "==== RELATIONSHIPS ====\n";
     for (const auto& npc : rels.npcs) {
         std::cout << " - " << npc.name << ": " << npc.affinity << "\n";
     }
@@ -337,7 +337,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({2, 2, "Various",
                  "Midday energy slump hits. Time to decide your afternoon focus.",
                  {
-                     {"Intense workout session", "Energy -20, Fitness +10, Health +2, Alex spots you", {-20, 2, 0, 0, 10, 0},
+                     {"Intense workout session", "Energy -20, Fitness +10, Health +2, Alex notices you", {-20, 2, 0, 0, 10, 0},
                       [](GameState& st, Player&, Relationships& rels) {
                           st.visitedGym = true;
                           rels.interactWith("Alex (Gym Crush)", 10);
@@ -353,7 +353,7 @@ std::vector<Scenario> buildScenarios()
                      {"Take a nap", "Energy +35 (may doomscroll)", {35, 0, 0, 0, 0, 0},
                       [](GameState&, Player& p, Relationships&) {
                           if (roll(0.35)) {
-                              std::cout << "You doomscrolled instead of sleeping.\n";
+                              std::cout << "YOU DOOMSCROLLED INSTEAD OF SLEEPING!!!.\n";
                               p.adjustEnergy(-15);
                           }
                       }},
@@ -1009,6 +1009,8 @@ std::vector<WeekDecay> buildWeekDecay()
 // Output: modifies Player and Relationships; may clear skipNextScenario.
 void applyWeekEnd(int week, GameState& state, Player& player, Relationships& rels, const DifficultySettings& diff)
 {
+    // Small pause before the end-of-week summary block.
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     std::cout << "\n[WEEK END] --- End of Week " << week << " ---\n";
 
     if (diff.weeklyAllowance > 0 && (!diff.allowanceNeedsGrades || player.academic > 60)) {
@@ -1048,6 +1050,64 @@ void applyWeekEnd(int week, GameState& state, Player& player, Relationships& rel
         }
     }
 
+    // Week-specific story events based on the design/game flow.
+    if (week == 2) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        std::cout << "\n========== SPECIAL EVENT ==========\n";
+        std::cout << "      UNEXPECTED CAMPUS-WIDE EVENT!\n";
+        std::cout << "===================================\n";
+        double r = static_cast<double>(rand()) / RAND_MAX;
+        if (r < 0.5) {
+            std::cout << "Free campus movie night on the quad! Social +8.\n";
+            player.adjustSocial(8);
+        } else {
+            std::cout << "Campus construction starts nearby. Noise and distractions all week.\n";
+            player.adjustEnergy(-5);
+            player.adjustAcademic(-2);
+            player.adjustHealth(-2);
+        }
+    } else if (week == 3) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        std::cout << "\n========== SPECIAL EVENT ==========\n";
+        std::cout << "        GPA RESULTS CAME OUT!\n";
+        std::cout << "===================================\n";
+        double r = static_cast<double>(rand()) / RAND_MAX;
+        if (r < 0.35) {
+            std::cout << "STELLAR GRADES WOOHOO! All stats +3, Energy +10.\n";
+            player.adjustEnergy(10);
+            player.adjustHealth(3);
+            player.adjustSocial(3);
+            player.adjustAcademic(3);
+            player.adjustFitness(3);
+        } else if (r < 0.70) {
+            std::cout << "You got a D and a C. Confidence shaken.\n";
+            player.adjustEnergy(-5);
+            player.adjustSocial(-2);
+            player.adjustAcademic(-5);
+        } else {
+            std::cout << "Results were alright. You feel okay about it.\n";
+        }
+    } else if (week == 4) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        std::cout << "\n========== SPECIAL EVENT ==========\n";
+        std::cout << "        HEALTH CRISIS DECLARED!\n";
+        std::cout << "===================================\n";
+        double r = static_cast<double>(rand()) / RAND_MAX;
+        if (r < 0.40) {
+            std::cout << "SUMMER FLU EPIDEMIC HITS! Health -20, Energy -25.\n";
+            player.adjustHealth(-20);
+            player.adjustEnergy(-25);
+        } else if (r < 0.70) {
+            std::cout << "CAMPUS WELLNESS PROGRAM LAUNCHES! Health +15, Energy +20.\n";
+            player.adjustHealth(15);
+            player.adjustEnergy(20);
+        } else {
+            std::cout << "HEAT WAVE CONTINUES. You feel drained.\n";
+            player.adjustEnergy(-10);
+            player.adjustHealth(-5);
+        }
+    }
+
     if (week == 6 && state.relationshipPath == "partner" && !state.partnerName.empty()) {
         rels.interactWith(state.partnerName, 15);
         std::cout << "[RELATIONSHIP] Relationship solidifies with " << state.partnerName << ".\n";
@@ -1057,7 +1117,10 @@ void applyWeekEnd(int week, GameState& state, Player& player, Relationships& rel
     auto weeklyEvents = Events::generateWeeklyEvents();
     for (const auto& e : weeklyEvents) {
         if (Events::rollEvent(e)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+            std::cout << "\n********** RANDOM EVENT **********\n";
             std::cout << "[EVENT] " << e.name << " - " << e.description << "\n";
+            std::cout << "**********************************\n";
             e.apply(player);
         }
     }
@@ -1099,6 +1162,8 @@ void runGame()
     GameState state;
 
     std::cout << "WELCOME TO SUMMER MAXXING!\n";
+    std::cout << "Your goal: Survive 8 weeks while balancing Energy, Health,\n";
+    std::cout << "Social, Academic, Fitness, and Money while building relationships.\n";
 
     // Offer to load an existing save (player stats + week) before starting a new run.
     bool loaded = false;
@@ -1131,6 +1196,8 @@ void runGame()
 
     if (!loaded) {
         diff = chooseDifficulty(player, difficultyIndex);
+        std::cout << "TIP: Don't let any stat sit low for too long.\n";
+        std::cout << "Work, rest and socialize in balance, and watch your Energy and Money.\n";
     }
 
     auto scenarios = buildScenarios();
@@ -1157,6 +1224,9 @@ void runGame()
             // Show current stats and relationships before each decision.
             player.printStats();
             printRelationships(rels);
+
+            // Brief pause before showing the scenario text block.
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
             std::cout << "\n------------------------------------\n";
             std::cout << "Scenario " << slot << " - " << sc.location << "\n";
@@ -1190,9 +1260,6 @@ void runGame()
 
             enforceCriticalRules(state, player);
             player.clampStats();
-            player.printStats();
-            // Brief pause after resolving the scenario.
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
 
         if (!state.gameOver) {
