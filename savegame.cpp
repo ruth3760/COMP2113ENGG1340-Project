@@ -1,6 +1,8 @@
 #include "savegame.h"
 #include "player.h"
 #include <fstream>
+#include <cstdio>
+#include <cerrno>
 
 bool SaveGame::save(const Player &p, int currentWeek, int scenario, const std::string &path)
 {
@@ -18,4 +20,11 @@ bool SaveGame::load(Player &p, int &currentWeek, int &scenario, const std::strin
     ifs >> currentWeek >> scenario;
     ifs >> p.energy >> p.health >> p.social >> p.academic >> p.fitness >> p.money;
     return true;
+}
+
+bool SaveGame::clear(const std::string &path)
+{
+    // Treat "file does not exist" as success so we don't block game flow.
+    int rc = std::remove(path.c_str());
+    return (rc == 0) || (errno == ENOENT);
 }
