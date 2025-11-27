@@ -263,6 +263,7 @@ DifficultySettings chooseDifficulty(Player& player, int& difficultyIndex)
     std::cout << "1. Trust Fund Kid (Easy) - Life on easy mode, just don't screw up\n";
     std::cout << "2. Average Student (Medium) - Typical college student struggles\n";
     std::cout << "3. Struggling Immigrant (Hard) - Provide for family, higher costs\n";
+    std::cout << "Please input 1, 2, or 3\n";
 
     int choice = promptInt(1, 3);
     difficultyIndex = choice;
@@ -314,17 +315,17 @@ std::vector<Scenario> buildScenarios()
     s.push_back({1, 1, "Dorm Room",
                  "Summer break begins! Your alarm blares at 8 AM cus you forgot to change them from all the exam stress. You choose to:",
                  {
-                     {"Sleep in", "Energy +40, Academic -3", {40, 0, 0, -3, 0, 0},
+                     {"Sleep in", "", {40, 0, 0, -3, 0, 0},
                       [](GameState&, Player&, Relationships&) {
                           std::cout << "You hit snooze and roll over, letting yourself drift back to sleep.\n";
                           std::cout << "The stress of exams slowly fades as you catch up on much-needed rest.\n";
                       }},
-                     {"Go for a run", "Energy -25, Fitness +8, Health +5", {-25, 5, 0, 0, 8, 0},
+                     {"Go for a run", "", {-25, 5, 0, 0, 8, 0},
                       [](GameState&, Player&, Relationships&) {
                           std::cout << "You lace up your shoes and jog through the quiet campus.\n";
                           std::cout << "The cool morning air and empty paths make the run feel refreshing.\n";
                       }},
-                     {"Plan your summer", "Energy -5, All stats +2", {-5, 2, 2, 2, 2, 0},
+                     {"Plan your summer", "", {-5, 2, 2, 2, 2, 0},
                       [](GameState&, Player&, Relationships&) {
                           std::cout << "You sit at your desk with a notebook and calendar.\n";
                           std::cout << "Listing goals for health, academics, finances, and relationships makes the summer feel full of possibility.\n";
@@ -334,7 +335,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({1, 2, "Hall",
                  "Everyone seems to be done with exams, so things are pretty quiet. Where to first?",
                  {
-                     {"Check out the gym", "Energy -20, Fitness +5, meet Alex", {-20, 0, 0, 0, 5, 0},
+                     {"Check out the gym", "", {-20, 0, 0, 0, 5, 0},
                       [](GameState& st, Player&, Relationships& rels) {
                           std::cout << "You enter the gym near your hall – it's surprisingly modern and well-equipped.\n";
                           std::cout << "Only a handful of dedicated students are here this early in summer.\n";
@@ -345,7 +346,7 @@ std::vector<Scenario> buildScenarios()
                           st.visitedGym = true;
                           rels.interactWith("Alex (Gym Crush)", 5);
                       }},
-                     {"Visit the library", "Energy -10, Academic +12, meet Sam", {-10, 0, 0, 12, 0, 0},
+                     {"Visit the library", "", {-10, 0, 0, 12, 0, 0},
                       [](GameState& st, Player&, Relationships& rels) {
                           std::cout << "You push through the heavy library doors into a calm, studious hush.\n";
                           std::cout << "Summer session means only the most dedicated students are here.\n";
@@ -356,7 +357,7 @@ std::vector<Scenario> buildScenarios()
                           st.metSam = true;
                           rels.interactWith("Sam (Study Buddy)", 3);
                       }},
-                     {"Hang in the common area", "Energy -10, Social +8, Money -5, meet Riley", {-10, 0, 8, 0, 0, -5},
+                     {"Hang in the common area", "", {-10, 0, 8, 0, 0, -5},
                       [](GameState& st, Player&, Relationships& rels) {
                           std::cout << "You head to the hall common area, where people are sprawled across sofas with laptops and board games.\n";
                           std::cout << "You grab an iced coffee and sink into a comfortable armchair.\n";
@@ -371,7 +372,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({1, 3, "Cafeteria",
                  "Lunch time. Your stomach rumbles.",
                  {
-                     {"Salad bar", "Money -12, Health +15 (Riley discount if met)", {0, 15, 0, 0, 0, -12},
+                     {"Salad bar", "", {0, 15, 0, 0, 0, -12},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "You load up a plate with fresh greens, grilled chicken, and colorful vegetables.\n";
                           std::cout << "It looks healthy but definitely costs more than the cheaper options.\n";
@@ -387,7 +388,7 @@ std::vector<Scenario> buildScenarios()
                               rels.interactWith("Riley (Barista)", 5);
                           }
                      }},
-                     {"Pizza slice", "Money -6, Health +3 (Social -2 if never hit the gym)", {0, 3, 0, 0, 0, -6},
+                     {"Pizza slice", "", {0, 3, 0, 0, 0, -6},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "You grab a quick pepperoni slice from the counter.\n";
                           std::cout << "It's greasy but satisfying, the classic comfort option.\n";
@@ -403,7 +404,7 @@ std::vector<Scenario> buildScenarios()
                               std::cout << "You shrug it off with a laugh — it's just one slice.\n";
                           }
                       }},
-                     {"Skip lunch", "Health -5, save money", {0, -5, 0, 0, 0, 0},
+                     {"Skip lunch", "", {0, -5, 0, 0, 0, 0},
                       [](GameState&, Player&, Relationships&) {
                           std::cout << "You decide to skip a proper meal and just sip water from the fountain instead.\n";
                           std::cout << "Your wallet is grateful, but your stomach growls in protest as the afternoon wears on.\n";
@@ -413,17 +414,17 @@ std::vector<Scenario> buildScenarios()
     s.push_back({1, 4, "Dorm Room",
                  "Evening approaches. How to wind down?",
                  {
-                     {"Video games", "Energy -10, Social +3 (online), Academic -2", {-10, 0, 3, -2, 0, 0},
+                     {"Video games", "", {-10, 0, 3, -2, 0, 0},
                       [](GameState&, Player&, Relationships&) {
                           std::cout << "You boot up your favorite game and queue into a few matches.\n";
                           std::cout << "Voice chat fills with familiar banter as you and online friends unwind from exam season.\n";
                       }},
-                     {"Study for summer course", "Energy -25, Academic +15", {-25, 0, 0, 15, 0, 0},
+                     {"Study for summer course", "", {-25, 0, 0, 15, 0, 0},
                       [](GameState&, Player&, Relationships&) {
                           std::cout << "You clear off your desk, open your summer course materials, and start reviewing.\n";
                           std::cout << "The quiet evening gives you a focused head start on the weeks ahead.\n";
                       }},
-                     {"Early bedtime", "Energy +35", {35, 0, 0, 0, 0, 0},
+                     {"Early bedtime", "", {35, 0, 0, 0, 0, 0},
                       [](GameState&, Player&, Relationships&) {
                           std::cout << "You put your phone away, close your laptop, and climb into bed early.\n";
                           std::cout << "As you drift off, you feel grateful for the chance to reset before summer truly begins.\n";
@@ -434,7 +435,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({2, 1, "Dorm Room",
                  "Monday again. The summer sun is already bright. You wake up feeling...",
                  {
-                     {"Hit the gym early", "Energy -25, Fitness +8, Money -2, Alex appreciates the spot", {-25, 0, 0, 0, 8, -2},
+                     {"Hit the gym early", "", {-25, 0, 0, 0, 8, -2},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.visitedGym = true;
                           rels.interactWith("Alex (Gym Crush)", 8);
@@ -444,12 +445,12 @@ std::vector<Scenario> buildScenarios()
                               p.adjustFitness(10);
                           }
                       }},
-                     {"Review summer course materials", "Energy -20, Academic +12, help Sam with the printer", {-20, 0, 0, 12, 0, 0},
+                     {"Review summer course materials", "", {-20, 0, 0, 12, 0, 0},
                       [](GameState& st, Player&, Relationships& rels) {
                           st.metSam = true;
                           rels.interactWith("Sam (Study Buddy)", 7);
                       }},
-                     {"Grab coffee and socialize", "Energy -10, Social +8, Money -5, Riley banter", {-10, 0, 8, 0, 0, -5},
+                     {"Grab coffee and socialize", "", {-10, 0, 8, 0, 0, -5},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.metRiley = true;
                           rels.interactWith("Riley (Barista)", 9);
@@ -461,7 +462,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({2, 2, "Various",
                  "Midday energy slump hits. Time to decide your afternoon focus.",
                  {
-                     {"Intense workout session", "Energy -20, Fitness +10, Health +2, Alex notices you", {-20, 2, 0, 0, 10, 0},
+                     {"Intense workout session", "", {-20, 2, 0, 0, 10, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.visitedGym = true;
                           rels.interactWith("Alex (Gym Crush)", 10);
@@ -471,7 +472,7 @@ std::vector<Scenario> buildScenarios()
                               p.adjustFitness(1);
                           }
                       }},
-                     {"Library deep dive", "Energy -25, Academic +15 (crowded risk)", {-25, 0, 0, 15, 0, 0},
+                     {"Library deep dive", "", {-25, 0, 0, 15, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           // 50% chance the library is too crowded to study effectively.
                           if (roll(0.50)) {
@@ -480,7 +481,7 @@ std::vector<Scenario> buildScenarios()
                           }
                           st.metSam = true;
                       }},
-                     {"Take a nap", "Energy +35 (may doomscroll)", {35, 0, 0, 0, 0, 0},
+                     {"Take a nap", "", {35, 0, 0, 0, 0, 0},
                       [](GameState&, Player& p, Relationships&) {
                           if (roll(0.35)) {
                               std::cout << "YOU DOOMSCROLLED INSTEAD OF SLEEPING!!!.\n";
@@ -492,7 +493,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({2, 3, "Various",
                  "Late afternoon. The day is winding down but there's still time for...",
                  {
-                     {"Evening gym session", "Energy -20, Fitness +6, Health +3", {-20, 3, 0, 0, 6, 0},
+                     {"Evening gym session", "", {-20, 3, 0, 0, 6, 0},
                       [](GameState&, Player& p, Relationships&) {
                           // Positive random event: empty gym lets you experiment with new equipment.
                           if (roll(0.20)) {
@@ -501,7 +502,7 @@ std::vector<Scenario> buildScenarios()
                               p.adjustHealth(2);
                           }
                       }},
-                     {"Quick study review", "Energy -15, Academic +8, Sam nods if present", {-15, 0, 0, 8, 0, 0},
+                     {"Quick study review", "", {-15, 0, 0, 8, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           if (st.metSam) {
                               rels.interactWith("Sam (Study Buddy)", 2);
@@ -513,7 +514,7 @@ std::vector<Scenario> buildScenarios()
                               p.adjustEnergy(-8);
                           }
                       }},
-                     {"Wind down socially", "Energy -10, Social +6, Money -8, time with Riley", {-10, 0, 6, 0, 0, -8},
+                     {"Wind down socially", "", {-10, 0, 6, 0, 0, -8},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.metRiley = true;
                           rels.interactWith("Riley (Barista)", 7);
@@ -529,7 +530,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({2, 4, "Dorm Room",
                  "Evening settles in. Your phone shows various notifications. Time to...",
                  {
-                     {"Gaming session", "Energy -5, Social +5 (online), Academic -3, Jordan queue", {-5, 0, 5, -3, 0, 0},
+                     {"Gaming session", "", {-5, 0, 5, -3, 0, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           rels.interactWith("Jordan (Gamer)", 8);
                           if (roll(0.2)) {
@@ -537,7 +538,7 @@ std::vector<Scenario> buildScenarios()
                               p.adjustEnergy(5);
                           }
                       }},
-                     {"Light studying", "Energy -10, Academic +10 (party risk)", {-10, 0, 0, 10, 0, 0},
+                     {"Light studying", "", {-10, 0, 0, 10, 0, 0},
                       [](GameState&, Player& p, Relationships&) {
                           if (roll(0.2)) {
                               std::cout << "Neighbors are loud. You lose focus.\n";
@@ -546,7 +547,7 @@ std::vector<Scenario> buildScenarios()
                               p.adjustSocial(2);
                           }
                       }},
-                     {"Early rest", "Energy +30, Health +5", {30, 5, 0, 0, 0, 0},
+                     {"Early rest", "", {30, 5, 0, 0, 0, 0},
                       [](GameState&, Player& p, Relationships&) {
                           if (roll(0.3)) {
                               std::cout << "Perfect sleep bonus.\n";
@@ -560,7 +561,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({3, 1, "Dorm Room",
                  "Wednesday morning. You're starting to find your summer rhythm. Time to...",
                  {
-                     {"Gym workout", "Energy -25, Fitness +8", {-25, 0, 0, 0, 8, 0},
+                     {"Gym workout", "", {-25, 0, 0, 0, 8, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "\n[LOCATION: Gym]\n";
                           std::cout << "Alex is working on pull-ups when you arrive. They drop down and walk over.\n\n";
@@ -586,7 +587,7 @@ std::vector<Scenario> buildScenarios()
                               std::cout << "You admit it's not really your thing. Alex nods, but the energy between you cools a bit.\n";
                           }
                       }},
-                     {"Library session", "Energy -20, Academic +12", {-20, 0, 0, 12, 0, 0},
+                     {"Library session", "", {-20, 0, 0, 12, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "\n[LOCATION: Library]\n";
                           std::cout << "Sam is here today, and you grab a seat next to them in a crowded row of desks.\n";
@@ -618,7 +619,7 @@ std::vector<Scenario> buildScenarios()
                               }
                           }
                       }},
-                     {"Look for part-time work", "Energy -15, Money opportunity", {-15, 0, 0, 0, 0, 0},
+                     {"Look for part-time work", "", {-15, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "\n[LOCATION: Campus Job Board]\n";
                           std::cout << "You browse summer job postings pinned to a crowded corkboard.\n";
@@ -668,7 +669,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({3, 2, "Various",
                  "Midday approaches. Your energy is holding up. Focus on...",
                  {
-                     {"Serious training", "Energy -30, Fitness +10, Health +2", {-30, 2, 0, 0, 10, 0},
+                     {"Serious training", "", {-30, 2, 0, 0, 10, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "\n[LOCATION: Gym]\n";
                           std::cout << "Alex leads you through an intense circuit training session.\n";
@@ -684,7 +685,7 @@ std::vector<Scenario> buildScenarios()
                               p.adjustEnergy(-10);
                           }
                       }},
-                     {"Academic push", "Energy -25, Academic +15", {-25, 0, 0, 15, 0, 0},
+                     {"Academic push", "", {-25, 0, 0, 15, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "\n[LOCATION: Library Study Room]\n";
                           std::cout << "Sam has reserved a study room for a focused afternoon session.\n";
@@ -703,7 +704,7 @@ std::vector<Scenario> buildScenarios()
                               }
                           }
                       }},
-                     {"Networking lunch", "Energy -10, Social +12, Money -15", {-10, 0, 12, 0, 0, -15},
+                     {"Networking lunch", "", {-10, 0, 12, 0, 0, -15},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "\n[LOCATION: Campus Cafe]\n";
                           std::cout << "You join Riley during their lunch break, chatting over sandwiches and coffee.\n";
@@ -730,7 +731,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({3, 3, "Various",
                  "Late afternoon. The summer heat is peaking. Time for...",
                  {
-                     {"Cool gym workout", "Energy -20, Fitness +6", {-20, 0, 0, 0, 6, 0},
+                     {"Cool gym workout", "", {-20, 0, 0, 0, 6, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.visitedGym = true;
                           rels.interactWith("Alex (Gym Crush)", 6);
@@ -741,13 +742,13 @@ std::vector<Scenario> buildScenarios()
                               p.adjustFitness(-3);
                           }
                       }},
-                     {"Focused study", "Energy -20, Academic +10, calm space with Sam", {-20, 0, 0, 10, 0, 0},
+                     {"Focused study", "", {-20, 0, 0, 10, 0, 0},
                       [](GameState&, Player&, Relationships& rels) {
                           if (roll(0.5)) {
                               rels.interactWith("Sam (Study Buddy)", 7);
                           }
                       }},
-                     {"Pool time", "Energy -15, Fitness +2, Money -8, social fun", {-15, 0, 5, 0, 2, -8},
+                     {"Pool time", "", {-15, 0, 5, 0, 2, -8},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.metRiley = true;
                           rels.interactWith("Riley (Barista)", 10);
@@ -763,22 +764,22 @@ std::vector<Scenario> buildScenarios()
     s.push_back({3, 4, "Dorm Room",
                  "Evening brings relief from the heat. Choose your wind down.",
                  {
-                     {"Online gaming", "Energy -10, Social +6 (online), Academic -2", {-10, 0, 6, -2, 0, 0},
+                     {"Online gaming", "", {-10, 0, 6, -2, 0, 0},
                       [](GameState&, Player&, Relationships& rels) { rels.interactWith("Jordan (Gamer)", 9); }},
-                     {"Evening study", "Energy -20, Academic +12", {-20, 0, 0, 12, 0, 0},
+                     {"Evening study", "", {-20, 0, 0, 12, 0, 0},
                       [](GameState& st, Player&, Relationships& rels) {
                           if (st.metSam) {
                               rels.interactWith("Sam (Study Buddy)", 5);
                           }
                       }},
-                     {"Rest and plan", "Energy +25, All stats +1", {25, 1, 1, 1, 1, 0}, nullptr},
+                     {"Rest and plan", "", {25, 1, 1, 1, 1, 0}, nullptr},
                  }});
 
     // Week 4
     s.push_back({4, 1, "Dorm Room",
                  "Monday morning. You're feeling the summer pressure mounting. Time to...",
                  {
-                     {"Gym - push through fatigue", "Energy -30, Fitness +10", {-30, 0, 0, 0, 10, 0},
+                     {"Gym - push through fatigue", "", {-30, 0, 0, 0, 10, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "\n[LOCATION: Gym]\n";
                           if (!rels.npcs.empty() && rels.npcs[0].affinity > 25) {
@@ -815,7 +816,7 @@ std::vector<Scenario> buildScenarios()
                               std::cout << "You decide today isn't the day and head back to your room to rest instead.\n";
                           }
                       }},
-                     {"Library - midterm prep", "Energy -25, Academic +15", {-25, 0, 0, 15, 0, 0},
+                     {"Library - midterm prep", "", {-25, 0, 0, 15, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "\n[LOCATION: Library]\n";
                           std::cout << "Sam looks stressed but determined, surrounded by stacks of notes.\n";
@@ -853,7 +854,7 @@ std::vector<Scenario> buildScenarios()
                               std::cout << "You apologize and cut the session short to handle other obligations.\n";
                           }
                       }},
-                     {"Side hustle search", "Energy -20, Money opportunity", {-20, 0, 0, 0, 0, 0},
+                     {"Side hustle search", "", {-20, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "\n[LOCATION: Campus Job Center]\n";
                           std::cout << "More urgent financial pressure this week. You scan listings for side hustles.\n";
@@ -888,7 +889,7 @@ std::vector<Scenario> buildScenarios()
       s.push_back({4, 2, "Various",
                    "Midweek energy crash. The summer grind is real...",
                    {
-                       {"Forced workout", "Energy -35, Fitness +12, Health -5", {-35, -5, 0, 0, 12, 0},
+                       {"Forced workout", "", {-35, -5, 0, 0, 12, 0},
                        [](GameState&, Player& p, Relationships& rels) {
                            std::cout << "\n[LOCATION: Gym]\n";
                            std::cout << "Your body screams in protest with every rep.\n";
@@ -920,7 +921,7 @@ std::vector<Scenario> buildScenarios()
                                Events::week4ForcedWorkoutInjury(p);
                            }
                       }},
-                     {"Academic emergency", "Energy -30, Academic +18, Social -5", {-30, 0, -5, 18, 0, 0},
+                     {"Academic emergency", "", {-30, 0, -5, 18, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "\n[LOCATION: Library]\n";
                           std::cout << "Sam looks like they haven't slept in days, dark circles under their eyes.\n";
@@ -951,7 +952,7 @@ std::vector<Scenario> buildScenarios()
                               rels.interactWith("Sam (Study Buddy)", 5);
                           }
                       }},
-                     {"Money desperation", "Energy -25, Money +50, All other stats -3", {-25, -3, -3, -3, -3, 50},
+                     {"Money desperation", "", {-25, -3, -3, -3, -3, 50},
                      [](GameState&, Player& p, Relationships&) {
                           // Week 4 random event: sketchy gig robbery.
                           Events::week4MoneyDesperationRobbery(p);
@@ -961,7 +962,7 @@ std::vector<Scenario> buildScenarios()
       s.push_back({4, 3, "Various",
                    "The week is breaking you. One more push before weekend...",
                    {
-                       {"Final workout", "Energy -25, Fitness +2 (or loss if low fitness)", {-25, 0, 0, 0, 2, 0},
+                       {"Final workout", "", {-25, 0, 0, 0, 2, 0},
                       [](GameState&, Player& p, Relationships&) {
                           if (p.fitness < 50) {
                               std::cout << "Overtrained. You backslide.\n";
@@ -971,7 +972,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 4 random event: magic potion offer.
                           Events::week4FinalWorkoutPotion(p);
                       }},
-                     {"Last-minute studying", "Energy -25, Academic +12", {-25, 0, 0, 12, 0, 0},
+                     {"Last-minute studying", "", {-25, 0, 0, 12, 0, 0},
                      [](GameState&, Player& p, Relationships&) {
                           if (p.academic < 50) {
                               std::cout << "Burnout hits. Progress slips.\n";
@@ -980,7 +981,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 4 random event: mental burnout.
                           Events::week4LastMinuteStudyBurnout(p);
                       }},
-                     {"Social recovery", "Energy -15, Social +10, Money -12", {-15, 0, 10, 0, 0, -12},
+                     {"Social recovery", "", {-15, 0, 10, 0, 0, -12},
                      [](GameState& st, Player& p, Relationships& rels) {
                           if (st.metRiley) {
                               rels.interactWith("Riley (Barista)", 10);
@@ -993,7 +994,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({4, 4, "Dorm Room",
                  "Friday night. You're drained. Choose recovery.",
                  {
-                     {"Complete collapse", "Energy +40, Health +10", {40, 10, 0, 0, 0, 0},
+                     {"Complete collapse", "", {40, 10, 0, 0, 0, 0},
                      [](GameState&, Player& p, Relationships&) {
                           if (p.health < 40) {
                               p.adjustHealth(15);
@@ -1002,7 +1003,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 4 random event: wake up sick anyway.
                           Events::week4CompleteCollapseSick(p);
                       }},
-                     {"Weekend prep", "Energy -20, All stats +3", {-20, 3, 3, 3, 3, 0}, nullptr},
+                     {"Weekend prep", "", {-20, 3, 3, 3, 3, 0}, nullptr},
                      {"Emergency measures", "Money -30, Energy +25, Health +15", {25, 15, 0, 0, 0, -30},
                       [](GameState&, Player& p, Relationships&) {
                           // Week 4 random event: buyer's remorse.
@@ -1014,7 +1015,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({5, 1, "Dorm Room",
                  "Monday morning. The pressure from last week lingers, but there's hope ahead.",
                  {
-                     {"Recovery workout", "Energy -15, Fitness +6, Health +3", {-15, 3, 0, 0, 6, 0},
+                     {"Recovery workout", "", {-15, 3, 0, 0, 6, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.visitedGym = true;
                           std::cout << "LOCATION: Gym\n";
@@ -1065,7 +1066,7 @@ std::vector<Scenario> buildScenarios()
                               }
                           }
                       }},
-                     {"Study planning", "Energy -10, Academic +8", {-10, 0, 0, 8, 0, 0},
+                     {"Study planning", "", {-10, 0, 0, 8, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.metSam = true;
                           std::cout << "LOCATION: Library\n";
@@ -1100,7 +1101,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 5 random event: research study money opportunity.
                           Events::week5StudyPlanningResearchStudy(p);
                       }},
-                     {"Financial planning", "Energy -10, Money +20 (savings)", {-10, 0, 0, 0, 0, 20},
+                     {"Financial planning", "", {-10, 0, 0, 0, 0, 20},
                       [](GameState&, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Room\n";
                           std::cout << "You spread out your bank statements and budgeting app on your desk.\n";
@@ -1136,7 +1137,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({5, 2, "Various",
                  "Midweek balance. Time to address your weakest area...",
                  {
-                     {"Fitness focus", "Energy -20, Fitness +10", {-20, 0, 0, 0, 10, 0},
+                     {"Fitness focus", "", {-20, 0, 0, 0, 10, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.visitedGym = true;
                           std::cout << "LOCATION: Gym\n";
@@ -1163,7 +1164,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 5 random event: old injury flares up.
                           Events::week5FitnessFocusOldInjury(p);
                       }},
-                     {"Academic catch-up", "Energy -25, Academic +15", {-25, 0, 0, 15, 0, 0},
+                     {"Academic catch-up", "", {-25, 0, 0, 15, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.metSam = true;
                           std::cout << "LOCATION: Library\n";
@@ -1207,7 +1208,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 5 random event: professor offers extra help.
                           Events::week5AcademicCatchupExtraHelp(p);
                       }},
-                     {"Social rebuilding", "Energy -15, Social +12, Money -10", {-15, 0, 12, 0, 0, -10},
+                     {"Social rebuilding", "", {-15, 0, 12, 0, 0, -10},
                       [](GameState& st, Player& p, Relationships& rels) {
                           st.metRiley = true;
                           std::cout << "LOCATION: Campus Social Spaces\n";
@@ -1262,7 +1263,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({5, 3, "Various",
                  "Late afternoon. The summer rhythm feels more natural now.",
                  {
-                     {"Sustainable workout", "Energy -15, Fitness +7, Health +2", {-15, 2, 0, 0, 7, 0},
+                     {"Sustainable workout", "", {-15, 2, 0, 0, 7, 0},
                       [](GameState&, Player& p, Relationships&) {
                           std::cout << "LOCATION: Gym\n";
                           std::cout << "You focus on form and consistency over intensity.\n";
@@ -1273,7 +1274,7 @@ std::vector<Scenario> buildScenarios()
                               p.adjustEnergy(5);
                           }
                       }},
-                     {"Effective studying", "Energy -18, Academic +13", {-18, 0, 0, 13, 0, 0},
+                     {"Effective studying", "", {-18, 0, 0, 13, 0, 0},
                       [](GameState&, Player& p, Relationships&) {
                           std::cout << "LOCATION: Library\n";
                           std::cout << "You use proven study techniques instead of just grinding.\n";
@@ -1294,7 +1295,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 5 random event: paid study group leader.
                           Events::week5EffectiveStudyingStudyLeader(p);
                       }},
-                     {"Meaningful socializing", "Energy -12, Social +10, Money -8", {-12, 0, 10, 0, 0, -8},
+                     {"Meaningful socializing", "", {-12, 0, 10, 0, 0, -8},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Various Social Spaces\n";
                           std::cout << "You prioritize quality connections over quantity.\n";
@@ -1346,7 +1347,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({5, 4, "Dorm Room",
                  "Friday evening. You've found better balance this week.",
                  {
-                     {"Restorative activities", "Energy +25, Health +8", {25, 8, 0, 0, 0, 0},
+                     {"Restorative activities", "", {25, 8, 0, 0, 0, 0},
                       [](GameState&, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Room\n";
                           std::cout << "Your body and mind thank you for the proper rest.\n";
@@ -1378,7 +1379,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 5 random event: perfect recovery day.
                           Events::week5RestorativePerfectRecovery(p);
                       }},
-                     {"Weekend preparation", "Energy -15, All stats +4", {-15, 4, 4, 4, 4, 0},
+                     {"Weekend preparation", "", {-15, 4, 4, 4, 4, 0},
                       [](GameState&, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Desk\n";
                           std::cout << "You plan the perfect balanced weekend.\n";
@@ -1415,7 +1416,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 5 random event: weekend gig pays double.
                           Events::week5WeekendPrepDoubleGig(p);
                       }},
-                     {"Stock investing", "Energy -10, Social +8, Money swing", {-10, 0, 8, 0, 0, -5},
+                     {"Stock investing", "", {-10, 0, 8, 0, 0, -5},
                       [](GameState&, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm\n";
                           std::cout << "You open your brokerage app and stare at the charts.\n";
@@ -1428,7 +1429,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({6, 1, "Dorm Room",
                  "Love triangles & drama: where do you focus your time today?",
                  {
-                     {"Workout with Alex", "Energy -20, Fitness +8, Alex time", {-20, 0, 0, 0, 8, 0},
+                     {"Workout with Alex", "", {-20, 0, 0, 0, 8, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Gym\n";
                           std::cout << "Alex texts you: \"Gym later? I want to show you a new routine.\"\n";
@@ -1468,7 +1469,7 @@ std::vector<Scenario> buildScenarios()
                               }
                           }
                       }},
-                     {"Study session with Sam", "Energy -18, Academic +10, Sam vs Riley tension", {-18, 0, 0, 10, 0, 0},
+                     {"Study session with Sam", "", {-18, 0, 0, 10, 0, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Library\n";
                           std::cout << "Sam has books spread everywhere when Riley shows up looking for you.\n";
@@ -1507,7 +1508,7 @@ std::vector<Scenario> buildScenarios()
                               rels.interactWith("Riley (Barista)", 25);
                           }
                       }},
-                     {"Coffee date with Riley", "Energy -15, Social +10, Riley vs Alex tension", {-15, 0, 10, 0, 0, 0},
+                     {"Coffee date with Riley", "", {-15, 0, 10, 0, 0, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Campus Cafe\n";
                           std::cout << "Riley has your usual ready, but Alex texts they're nearby and wants to join.\n";
@@ -1547,7 +1548,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({6, 2, "Various",
                  "Midday chaos! Group dynamics, solitude, or a crisis call your name.",
                  {
-                     {"Campus event with friends", "Energy -15, Social +15", {-15, 0, 15, 0, 0, 0},
+                     {"Campus event with friends", "", {-15, 0, 15, 0, 0, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Campus Quad\n";
                           std::cout << "Alex, Sam, and Riley are all at the summer festival, sneaking glances your way.\n";
@@ -1580,7 +1581,7 @@ std::vector<Scenario> buildScenarios()
                               std::cout << "You try to divide your time equally. It's exhausting but diplomatic.\n";
                           }
                       }},
-                     {"Quiet escape alone", "Energy +20, All stats +2", {20, 2, 2, 2, 2, 0},
+                     {"Quiet escape alone", "", {20, 2, 2, 2, 2, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Hidden Campus Spot\n";
                           std::cout << "You find a secret garden nobody knows about. Perfect solitude.\n";
@@ -1606,7 +1607,7 @@ std::vector<Scenario> buildScenarios()
                               p.adjustFitness(3);
                           }
                       }},
-                     {"Help someone in crisis", "Energy -25, Hero moment", {-25, 0, 0, 0, 0, 0},
+                     {"Help someone in crisis", "", {-25, 0, 0, 0, 0, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Various\n";
                           std::cout << "You get an urgent message from someone having a rough day.\n";
@@ -1645,7 +1646,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({6, 3, "Various",
                  "Afternoon decisions get more intense as feelings surface.",
                  {
-                     {"Fitness competition with Alex", "Energy -25, Fitness +12", {-25, 0, 0, 0, 12, 0},
+                     {"Fitness competition with Alex", "", {-25, 0, 0, 0, 12, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Gym Competition\n";
                           std::cout << "You and Alex sign up for a fitness challenge. Sam and Riley come to cheer.\n";
@@ -1671,7 +1672,7 @@ std::vector<Scenario> buildScenarios()
                               rels.interactWith("Riley (Barista)", 1);
                           }
                       }},
-                     {"Hackathon with Sam", "Energy -22, Academic +15", {-22, 0, 0, 15, 0, 0},
+                     {"Hackathon with Sam", "", {-22, 0, 0, 15, 0, 0},
                       [](GameState&, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Hackathon Competition\n";
                           std::cout << "You and Sam make an unbeatable team, but distractions abound.\n";
@@ -1685,7 +1686,7 @@ std::vector<Scenario> buildScenarios()
                           // Week 6 random event: hackathon victory.
                           Events::week6HackathonWin(p, rels);
                       }},
-                     {"Double date situation", "Energy -18, Social +15, Money -15", {-18, 0, 15, 0, 0, -15},
+                     {"Double date situation", "", {-18, 0, 15, 0, 0, -15},
                       [](GameState& st, Player&, Relationships& rels) {
                           std::cout << "LOCATION: Various\n";
                           std::cout << "You end up at a social event with multiple people who might like you.\n";
@@ -1715,7 +1716,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({6, 4, "Dorm Room",
                  "Friday night. Time to make some relationship decisions before the weekend.",
                  {
-                     {"Confront the love triangle", "Energy -20, Force relationship choices", {-20, 0, 0, 0, 0, 0},
+                     {"Confront the love triangle", "", {-20, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Your Dorm\n";
 
@@ -1785,7 +1786,7 @@ std::vector<Scenario> buildScenarios()
                               }
                           }
                       }},
-                     {"Avoid everyone and game", "Energy -10, Social +5 (online)", {-10, 0, 5, 0, 0, 0},
+                     {"Avoid everyone and game", "", {-10, 0, 5, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Dorm Room\n";
                           std::cout << "You log into your favorite game. Jordan is your safe space.\n";
@@ -1801,7 +1802,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({7, 1, "Dorm Room",
                  "Monday morning. The fallout from last week is still fresh.",
                  {
-                     {"Spend time with your partner", "Energy -20, Affinity +15, Social +10", {-20, 0, 10, 0, 0, 0},
+                     {"Spend time with your partner", "", {-20, 0, 10, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           if (st.relationshipPath != "partner" || st.partnerName.empty()) return;
                           std::cout << "LOCATION: Partner's spot\n";
@@ -1831,7 +1832,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath == "partner"; },
                       "No partner chosen"},
-                     {"Enjoy single life freedom", "Energy -15, Social +12, Money -10", {-15, 0, 12, 0, 0, -10},
+                     {"Enjoy single life freedom", "", {-15, 0, 12, 0, 0, -10},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Campus Grounds\n";
                           std::cout << "You decide to embrace being single and free.\n";
@@ -1856,7 +1857,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath != "partner"; },
                       "Locked to non-partner paths"},
-                     {"Deal with campus gossip", "Energy -25, Social -5", {-25, 0, -5, 0, 0, 0},
+                     {"Deal with campus gossip", "", {-25, 0, -5, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Hallway\n";
                           std::cout << "Whispers follow you everywhere after last week's drama.\n";
@@ -1880,7 +1881,7 @@ std::vector<Scenario> buildScenarios()
                           }
                           st.relationshipPath = "drama";
                       }},
-                     {"Recharge alone", "Energy +25, Health +10", {25, 10, 0, 0, 0, 0},
+                     {"Recharge alone", "", {25, 10, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Room\n";
                           std::cout << "You decide to ignore everyone and focus on yourself.\n";
@@ -1906,7 +1907,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({7, 2, "Campus Cafe",
                  "Attempted polyamory: Alex, Sam, and Riley all show up.",
                  {
-                     {"Propose polyamory openly", "Energy -25, very risky conversation", {-25, 0, 0, 0, 0, 0},
+                     {"Propose polyamory openly", "", {-25, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Cafe Table\n";
                           std::cout << "You explain your idea of being with more than one person honestly.\n";
@@ -1940,7 +1941,7 @@ std::vector<Scenario> buildScenarios()
                           }
                           st.relationshipPath = "drama";
                       }},
-                     {"Try to juggle conversations", "Energy -20, Social +10", {-20, 0, 10, 0, 0, 0},
+                     {"Try to juggle conversations", "", {-20, 0, 10, 0, 0, 0},
                       [](GameState& st, Player&, Relationships& rels) {
                           std::cout << "You bounce between Alex, Sam, and Riley, trying to keep everyone happy.\n";
                           std::cout << "  1) Focus more on Alex\n";
@@ -1962,7 +1963,7 @@ std::vector<Scenario> buildScenarios()
                           }
                           st.relationshipPath = "drama";
                       }},
-                     {"Back out awkwardly", "Energy +15, Social -5", {15, 0, -5, 0, 0, 0},
+                     {"Back out awkwardly", "", {15, 0, -5, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Cafe Exit\n";
                           std::cout << "You panic and leave suddenly.\n";
@@ -1991,7 +1992,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({7, 3, "Various",
                  "Afternoon choices reflect your summer trajectory.",
                  {
-                     {"Couple workout/study session", "Partner path: shared growth", {-20, 0, 0, 0, 0, 0},
+                     {"Couple workout/study session", "", {-20, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           if (st.relationshipPath != "partner" || st.partnerName.empty()) return;
                           std::cout << "LOCATION: Gym/Library\n";
@@ -2027,7 +2028,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath == "partner"; },
                       "Partner path only"},
-                     {"Party hopping", "Single path: enjoy the night", {-20, 0, 15, 0, 0, -30},
+                     {"Party hopping", "", {-20, 0, 15, 0, 0, -30},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Off-Campus Party\n";
                           std::cout << "You bounce between parties, enjoying the single life.\n";
@@ -2053,7 +2054,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath != "partner"; },
                       "Single/drama paths only"},
-                     {"Damage control with friends", "Drama path: repair attempts", {-15, 0, 10, 0, 0, 0},
+                     {"Damage control with friends", "", {-15, 0, 10, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Common Area\n";
                           std::cout << "You try to repair relationships after the drama.\n";
@@ -2078,7 +2079,7 @@ std::vector<Scenario> buildScenarios()
                           }
                           st.relationshipPath = "drama";
                       }},
-                     {"Solo meditation", "Avoidance path: focus inward", {25, 12, 0, 0, 0, 0},
+                     {"Solo meditation", "", {25, 12, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Room\n";
                           std::cout << "You focus inward, ignoring external chaos.\n";
@@ -2104,7 +2105,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({7, 4, "Dorm Room",
                  "Friday night. The week's choices weigh on you.",
                  {
-                     {"Deep talk with partner", "Affinity +20, Social +10", {0, 0, 10, 0, 0, 0},
+                     {"Deep talk with partner", "", {0, 0, 10, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           if (st.relationshipPath != "partner" || st.partnerName.empty()) return;
                           std::cout << "LOCATION: Partner's Room\n";
@@ -2128,7 +2129,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath == "partner"; },
                       "Partner path only"},
-                     {"Casual gaming with Jordan", "Single path: chill session", {0, 0, 8, 0, 0, 0},
+                     {"Casual gaming with Jordan", "", {0, 0, 8, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Online\n";
                           std::cout << "You log in with Jordan for a chill gaming session.\n";
@@ -2152,7 +2153,7 @@ std::vector<Scenario> buildScenarios()
                               st.relationshipPath = "single";
                           }
                       }},
-                     {"Distract yourself with work", "Drama path: bury yourself in tasks", {-20, 0, 0, 12, 0, 0},
+                     {"Distract yourself with work", "", {-20, 0, 0, 12, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Library\n";
                           std::cout << "You bury yourself in assignments to avoid drama.\n";
@@ -2172,7 +2173,7 @@ std::vector<Scenario> buildScenarios()
                           }
                           st.relationshipPath = "drama";
                       }},
-                     {"Early sleep", "Avoidance path: rest instead of engaging", {30, 10, 0, 0, 0, 0},
+                     {"Early sleep", "", {30, 10, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Room\n";
                           std::cout << "You decide to sleep instead of engaging with anyone.\n";
@@ -2198,7 +2199,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({8, 1, "Library",
                  "Final exams week. Your focus depends on your path.",
                  {
-                     {"Study with partner", "Partner path: Academic focus with support", {0, 0, 0, 0, 0, 0},
+                     {"Study with partner", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           if (st.relationshipPath != "partner" || st.partnerName.empty()) return;
                           std::cout << "LOCATION: Library Study Room\n";
@@ -2223,7 +2224,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath == "partner"; },
                       "Partner path only"},
-                     {"Solo cram session", "Single/avoidance: grind alone", {0, 0, 0, 0, 0, 0},
+                     {"Solo cram session", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Desk\n";
                           std::cout << "You grind through textbooks alone.\n";
@@ -2245,7 +2246,7 @@ std::vector<Scenario> buildScenarios()
                           }
                           if (st.relationshipPath == "open") st.relationshipPath = "avoidance";
                       }},
-                     {"Distracted by drama", "Drama path: phone buzzing non-stop", {0, 0, 0, 0, 0, 0},
+                     {"Distracted by drama", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Library\n";
                           std::cout << "Your phone keeps buzzing with messages about last week's chaos.\n";
@@ -2273,7 +2274,7 @@ std::vector<Scenario> buildScenarios()
       s.push_back({8, 2, "Campus Quad",
                    "The big end-of-summer party arrives. Everyone is there.",
                  {
-                      {"Attend with partner", "Partner path: arrive together", {},
+                      {"Attend with partner", "", {},
                         [](GameState& st, Player& p, Relationships& rels) {
                             if (st.relationshipPath != "partner" || st.partnerName.empty()) return;
                             p.adjustMoney(-40);
@@ -2299,7 +2300,7 @@ std::vector<Scenario> buildScenarios()
                         },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath == "partner"; },
                       "Partner path only"},
-                       {"Go wild single", "Single path: embrace chaos", {},
+                       {"Go wild single", "", {},
                         [](GameState& st, Player& p, Relationships& rels) {
                             p.adjustMoney(-50);
                             std::cout << "\nLOCATION: Party Grounds\n";
@@ -2328,7 +2329,7 @@ std::vector<Scenario> buildScenarios()
                                 st.relationshipPath = "single";
                             }
                         }},
-                       {"Show up despite drama", "Drama/poly path: face tension", {},
+                       {"Show up despite drama", "", {},
                         [](GameState& st, Player& p, Relationships& rels) {
                             p.adjustMoney(-20);
                             std::cout << "\nLOCATION: Party Grounds\n";
@@ -2394,7 +2395,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({8, 3, "Dorm Room",
                  "Final weekend. Time to reflect on your summer.",
                  {
-                     {"Future planning with partner", "Partner path: talk about the future", {0, 0, 0, 0, 0, 0},
+                     {"Future planning with partner", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           if (st.relationshipPath != "partner" || st.partnerName.empty()) return;
                           std::cout << "LOCATION: Partner's Room\n";
@@ -2414,7 +2415,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath == "partner"; },
                       "Partner path only"},
-                     {"Set solo goals", "Single path: write down ambitions", {0, 0, 0, 0, 0, 0},
+                     {"Set solo goals", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Desk\n";
                           std::cout << "You write down your ambitions for the next year.\n";
@@ -2434,7 +2435,7 @@ std::vector<Scenario> buildScenarios()
                               st.relationshipPath = "single";
                           }
                       }},
-                     {"Try to repair drama damage", "Drama/poly path: reach out", {0, 0, 0, 0, 0, 0},
+                     {"Try to repair drama damage", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Cafe\n";
                           std::cout << "You reach out to those you hurt.\n";
@@ -2460,7 +2461,7 @@ std::vector<Scenario> buildScenarios()
                           }
                           st.relationshipPath = "drama";
                       }},
-                     {"Rest deeply", "Avoidance path: prioritize recovery", {0, 0, 0, 0, 0, 0},
+                     {"Rest deeply", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Room\n";
                           std::cout << "You prioritize recovery above all else.\n";
@@ -2485,7 +2486,7 @@ std::vector<Scenario> buildScenarios()
     s.push_back({8, 4, "Campus Quad",
                  "Sunday evening. The summer ends.",
                  {
-                     {"Farewell with partner", "Partner path: final moment", {0, 0, 0, 0, 0, 0},
+                     {"Farewell with partner", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           if (st.relationshipPath != "partner" || st.partnerName.empty()) return;
                           std::cout << "LOCATION: Gym/Library/Cafe\n";
@@ -2507,7 +2508,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath == "partner"; },
                       "Partner path only"},
-                     {"Farewell with friends", "Single path: gather friends", {0, 0, 0, 0, 0, 0},
+                     {"Farewell with friends", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Common Area\n";
                           std::cout << "You gather your closest friends for a goodbye.\n";
@@ -2531,7 +2532,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath != "partner"; },
                       "Single/drama/avoidance paths"},
-                     {"Farewell awkwardly", "Drama/poly path: all at once", {0, 0, 0, 0, 0, 0},
+                     {"Farewell awkwardly", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships& rels) {
                           std::cout << "LOCATION: Campus Quad\n";
                           std::cout << "You bump into Alex, Sam, and Riley at once.\n";
@@ -2555,7 +2556,7 @@ std::vector<Scenario> buildScenarios()
                       },
                       [](const GameState& st, const Player&, const Relationships&) { return st.relationshipPath == "drama"; },
                       "Drama/poly paths only"},
-                     {"Farewell quietly", "Avoidance path: reflect alone", {0, 0, 0, 0, 0, 0},
+                     {"Farewell quietly", "", {0, 0, 0, 0, 0, 0},
                       [](GameState& st, Player& p, Relationships&) {
                           std::cout << "LOCATION: Dorm Room\n";
                           std::cout << "You avoid everyone and reflect alone.\n";
@@ -3030,6 +3031,7 @@ void runGame()
     std::cout << "• Save money for emergencies\n\n";
 
     std::cout << "READY TO MAX YOUR SUMMER?\n";
+    std::cout << "Please note that you can pause and save/exit the game at the end of each week!\n";
     waitForEnter();
 
     auto scenarios = buildScenarios();
@@ -3071,7 +3073,7 @@ void runGame()
                 bool ok = !c.available || c.available(state, player, rels);
                 if (ok) {
                     availableIndices.push_back(static_cast<int>(i));
-                    std::cout << "  " << availableIndices.size() << ") " << c.title << " - " << c.detail << "\n";
+                    std::cout << "  " << availableIndices.size() << ") " << c.title << "" << c.detail << "\n";
                 } else {
                     std::cout << "  - " << c.title << " [locked: " << c.lockReason << "]\n";
                 }
