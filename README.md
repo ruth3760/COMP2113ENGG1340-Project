@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: sentence
----
-
 # Summer Maxxing (Text-Based Mini-Game)
 
 A small, terminal-based life-sim for COMP2113/ENGG1340.
