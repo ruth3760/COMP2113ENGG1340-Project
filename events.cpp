@@ -10,19 +10,13 @@
 using namespace std;
 
 // Forward declaration for the shared input helper defined in main.cpp.
-// Prompts the user for an integer input within the range [min, max].
 int promptInt(int min, int max);
 
-// Static variable to ensure random number generator is seeded only once.
-// Seeds the random number generator with the current time when the program starts.
 static bool seed_done = [](){ srand((unsigned)time(nullptr)); return true; }();
 
 namespace {
 
 // Local probability roll helper for events.
-// Rolls a random number and checks if it is less than the given probability.
-// Input: probability (double) - the chance of success (0.0 to 1.0).
-// Output: Returns true if the random roll is less than the probability, false otherwise.
 bool rollProbability(double probability)
 {
     double r = static_cast<double>(rand()) / RAND_MAX;
@@ -30,7 +24,6 @@ bool rollProbability(double probability)
 }
 
 // Helper to add a blank line before and after event text.
-// Ensures better formatting for event outputs by adding spacing.
 struct EventSpacing {
     EventSpacing()  { std::cout << std::endl; }
     ~EventSpacing() { std::cout << std::endl; }
@@ -40,49 +33,30 @@ struct EventSpacing {
 
 namespace Events {
 
-// Generates a list of weekly possible events with their descriptions, probabilities, and effects.
-// Input: None.
-// Output: Returns a vector of `Event` objects, each representing a possible event.
 std::vector<Event> generateWeeklyEvents()
 {
     std::vector<Event> out;
 
-    // Event: Inheritance
     out.push_back({"YOU RECEIVE AN INHERITANCE!!!", "A distant relative leaves you some money.", 0.05,
                    [](Player &p){ p.adjustMoney(500); }});
 
-    // Event: Gym Sale
     out.push_back({"GYM SALE!!!!", "Gym equipment is cheaper this week.", 0.10,
                    [](Player &p){ /* could set a flag or reduce costs */ p.adjustSocial(0); }});
 
-    // Event: Study Breakthrough
     out.push_back({"STUDY BREAKTHROUGH!!!", "You finally understand a tough concept.", 0.15,
                    [](Player &p){ p.adjustAcademic(20); }});
 
-    // Event: Sports Injury
     out.push_back({"SPORTS INJURY!!!", "You injure yourself during exercise.", 0.05,
                    [](Player &p){ p.adjustHealth(-20); p.adjustFitness(-10); p.adjustMoney(-100); }});
 
     return out;
 }
 
-// Rolls a random chance to determine if an event occurs based on its probability.
-// Input: e (Event) - the event to evaluate.
-// Output: Returns true if the event occurs, false otherwise.
 bool rollEvent(const Event &e)
 {
     return rollProbability(e.probability);
 }
 
-// Handles random events that may occur during Week 1.
-// Input:
-// - slot (int): Reserved for extensibility, not currently used.
-// - currentWeek (int): The current week of the game.
-// - friendEventDone (bool&): Tracks if the friend event has already occurred.
-// - routerEventDone (bool&): Tracks if the router event has already occurred.
-// - eveningEventDone (bool&): Tracks if the evening event has already occurred.
-// - player (Player&): The player object whose stats may be modified.
-// Output: Updates the player's stats and event flags based on random outcomes.
 void maybeRunWeek1RandomEvent(
     int slot,
     int currentWeek,
@@ -152,14 +126,6 @@ void maybeRunWeek1RandomEvent(
     }
 }
 
-// Handles special random events that occur at the end of each week.
-// Input:
-// - week (int): The current week of the game.
-// - relationshipPath (std::string): The player's chosen relationship path (e.g., "partner", "single").
-// - partnerName (std::string): The name of the player's partner, if applicable.
-// - player (Player&): The player object whose stats may be modified.
-// - rels (Relationships&): The Relationships object managing NPC interactions.
-// Output: Updates the player's stats and relationships based on weekly events.
 void runWeekEndRandomEvents(
     int week,
     const std::string &relationshipPath,
@@ -473,9 +439,271 @@ void runWeekEndRandomEvents(
     }
 }
 
-// Week-specific random events for Week 4.
-// Input: player (Player&) - The player object whose stats may be modified.
-// Output: Updates the player's stats based on random outcomes.
+// NEW EVENTS FROM GAME PLAN
+
+void mysteryPackageArrives(Player &player)
+{
+    if (!rollProbability(0.25)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 📦 MYSTERY PACKAGE ARRIVES 📦\n";
+    std::cout << "There's a battered cardboard box at your door. No return address.\n";
+    std::cout << "Inside: homemade cookies, your favorite snacks, and a handwritten note.\n";
+    std::cout << "Tucked in the corner: a $20 bill \"for emergencies.\"\n";
+    player.adjustHealth(15);
+    player.adjustSocial(8);
+    player.adjustMoney(20);
+    player.adjustEnergy(5);
+}
+
+void academicMeltdownImminent(Player &player)
+{
+    if (!rollProbability(0.20)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 🔥 ACADEMIC MELTDOWN IMMINENT 🔥\n";
+    std::cout << "You open the summer course portal and your blood runs cold.\n";
+    std::cout << "\"FINAL RESEARCH PAPER: 5,000 words due: TOMORROW.\"\n";
+    std::cout << "  1) Pull all-nighter\n";
+    std::cout << "  2) Beg for extension\n";
+    std::cout << "  3) Accept failure\n";
+    int choice = promptInt(1, 3);
+    if (choice == 1) {
+        player.adjustAcademic(20);
+        player.adjustEnergy(-40);
+        player.adjustHealth(-10);
+    } else if (choice == 2) {
+        player.adjustSocial(-5);
+    } else {
+        player.adjustAcademic(-15);
+        player.adjustEnergy(20);
+    }
+}
+
+void campusWifiUpgrade(Player &player)
+{
+    if (!rollProbability(0.15)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] Campus wifi upgrade in progress\n";
+    std::cout << "Online activities unavailable for the next scenario.\n";
+    player.adjustAcademic(-3);
+    player.adjustSocial(-2);
+}
+
+void academicMiracleStrikes(Player &player)
+{
+    if (!rollProbability(0.20)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 🎓 ACADEMIC MIRACLE STRIKES 🎓\n";
+    std::cout << "EMAIL NOTIFICATION: \"URGENT: Financial Aid Office Update\"\n";
+    std::cout << "CONGRATULATIONS! Due to outstanding academic performance, you've been awarded an unexpected refund.\n";
+    player.adjustMoney(200);
+    player.adjustAcademic(10);
+    player.adjustEnergy(15);
+}
+
+void desperateClientAlert(Player &player)
+{
+    if (!rollProbability(0.25)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 💻 DESPERATE CLIENT ALERT 💻\n";
+    std::cout << "DISCORD NOTIFICATION: \"HELP! Need someone to fix my website ASAP! $100 for 2 hours work?\"\n";
+    std::cout << "  1) Take the gig - how hard can it be?\n";
+    std::cout << "  2) Negotiate higher rate\n";
+    std::cout << "  3) Run away screaming\n";
+    int choice = promptInt(1, 3);
+    
+    if (choice == 1) {
+        if (rollProbability(0.40)) {
+            std::cout << "SUCCESS! Client is ecstatic! 'You're a genius!'\n";
+            player.adjustMoney(120);
+        } else {
+            std::cout << "DISASTER! Client hates it. 'This isn't what I envisioned!'\n";
+            player.adjustMoney(0);
+        }
+        player.adjustEnergy(-25);
+        player.adjustSocial(-5);
+    } else if (choice == 2) {
+        if (player.social > 60) {
+            std::cout << "You talk them up to $200! The art of the deal!\n";
+            player.adjustMoney(200);
+        } else {
+            std::cout << "They found someone cheaper on Fiverr. Client ghosts you.\n";
+        }
+        player.adjustEnergy(-30);
+    } else {
+        std::cout << "Some money isn't worth the mental health cost.\n";
+        player.adjustEnergy(10);
+    }
+}
+
+void shadyOpportunity(Player &player)
+{
+    if (!rollProbability(0.20)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 🕶️ SHADY OPPORTUNITY ARISES 🕶️\n";
+    std::cout << "A mysterious student approaches you in the library stacks.\n";
+    std::cout << "\"Hey... I hear you're good with computers. I need someone to help with a 'special project'. Pays $300 cash. No questions asked.\"\n";
+    std::cout << "  1) I'm listening...\n";
+    std::cout << "  2) Not interested\n";
+    std::cout << "  3) Report to authorities\n";
+    int choice = promptInt(1, 3);
+    
+    if (choice == 1) {
+        double r = static_cast<double>(rand()) / RAND_MAX;
+        if (r < 0.30) {
+            std::cout << "BIG SCORE! The 'project' was totally legal... probably.\n";
+            player.adjustMoney(300);
+            // Bad Karma represented as social penalty
+            player.adjustSocial(-5);
+        } else if (r < 0.80) {
+            std::cout << "SCAMMED! You got played. The 'client' disappeared.\n";
+            player.adjustMoney(-50);
+            player.adjustEnergy(-20);
+        } else {
+            std::cout << "CAUGHT! Campus security 'had a talk' with you.\n";
+            player.adjustSocial(-15);
+            player.adjustAcademic(-10);
+        }
+    } else if (choice == 2) {
+        std::cout << "You sleep well knowing you avoided potential felonies.\n";
+        player.adjustEnergy(5);
+    } else {
+        std::cout << "You report the student. You feel responsible.\n";
+        player.adjustSocial(3);
+    }
+}
+
+void unexpectedInheritance(Player &player)
+{
+    if (!rollProbability(0.20)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] UNEXPECTED INHERITANCE FROM RELATIVE!\n";
+    std::cout << "You receive $200 from a relative you barely remember.\n";
+    player.adjustMoney(200);
+    player.adjustSocial(5);
+}
+
+void urgentFreelanceGig(Player &player)
+{
+    if (!rollProbability(0.25)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] URGENT FREELANCE GIG - HIGH PAY!\n";
+    std::cout << "Quick freelance work pays $75 but requires immediate attention.\n";
+    player.adjustMoney(75);
+    player.adjustEnergy(-25);
+}
+
+void constructionNoiseAdvisory(Player &player)
+{
+    if (!rollProbability(0.30)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 🌋 UNEXPECTED CAMPUS CRISIS 🌋\n";
+    std::cout << "CONSTRUCTION NOISE ADVISORY: Renovations starting at University Center.\n";
+    std::cout << "Expected duration: 2 weeks. Earplugs recommended.\n";
+    std::cout << "The noise is unbearable and affects your focus.\n";
+    player.adjustEnergy(-5);
+    player.adjustSocial(2); // Shared suffering brings people together
+    // All stat gains reduced by 3 for next scenario (would need to be handled in scenario logic)
+}
+
+void printerBreakdown(Player &player, Relationships &rels)
+{
+    if (!rollProbability(0.25)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 📚 PRINTER BREAKDOWN 📚\n";
+    std::cout << "The library printer is having a meltdown. Sam looks frustrated.\n";
+    std::cout << "SAM: \"Do you know what's going on with this thing today? I have 50 pages due in an hour!\"\n";
+    std::cout << "  1) Let me help fix it\n";
+    std::cout << "  2) Sorry, can't help\n";
+    int choice = promptInt(1, 2);
+    if (choice == 1) {
+        player.adjustEnergy(-15);
+        rels.interactWith("Sam (Study Buddy)", 7);
+        player.adjustAcademic(5);
+    } else {
+        rels.interactWith("Sam (Study Buddy)", -3);
+        player.adjustAcademic(10);
+    }
+}
+
+void surpriseGymEvent(Player &player)
+{
+    if (!rollProbability(0.20)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 🎉 SURPRISE GYM EVENT! 🎉\n";
+    std::cout << "The gym manager approaches: \"We're doing a free personal training session giveaway for our most dedicated members... and YOU just won!\"\n";
+    player.adjustFitness(10);
+    player.adjustHealth(5);
+}
+
+void nearDisasterStrikes(Player &player)
+{
+    if (!rollProbability(0.15)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 💀 NEAR-DISASTER STRIKES 💀\n";
+    std::cout << "Your grip slips! The barbell tumbles toward your chest...\n";
+    std::cout << "Alex's reflexes save you by centimeters.\n";
+    std::cout << "\"Maybe we should stick to lighter weights today,\" Alex says, looking pale.\n";
+    player.adjustHealth(-5);
+    player.adjustEnergy(-10);
+}
+
+void studyStruggles(Player &player)
+{
+    if (!rollProbability(0.25)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 📖 STUDY STRUGGLES 📖\n";
+    std::cout << "The library is PACKED. Every seat taken, every outlet occupied.\n";
+    std::cout << "The summer students have emerged from hibernation.\n";
+    player.adjustAcademic(-7);
+    player.adjustEnergy(-5);
+}
+
+void napTrap(Player &player)
+{
+    if (!rollProbability(0.20)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 😪 THE NAP TRAP 😪\n";
+    std::cout << "\"Just 20 minutes,\" you tell yourself...\n";
+    std::cout << "*3 hours later* You wake up disoriented, drooling on your textbook.\n";
+    player.adjustEnergy(15); // Instead of full 25
+    player.adjustAcademic(-3);
+}
+
+void legendaryGamingDrop(Player &player, Relationships &rels)
+{
+    if (!rollProbability(0.15)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] 🏆 LEGENDARY DROP! 🏆\n";
+    std::cout << "THE UNTHINKABLE HAPPENS! After months of farming, the ultra-rare item drops for your team.\n";
+    std::cout << "Jordan screams in your ear: \"NO WAY! THAT'S A 0.001% DROP!\"\n";
+    player.adjustEnergy(10);
+    player.adjustSocial(5);
+    rels.interactWith("Jordan (Gamer)", 10);
+}
+
+void noisyNeighbors(Player &player)
+{
+    if (!rollProbability(0.20)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] Neighbors are having a loud party next door!\n";
+    std::cout << "Concentration broken, study efficiency reduced.\n";
+    player.adjustEnergy(-10);
+    player.adjustAcademic(-5);
+}
+
+void perfectSleep(Player &player)
+{
+    if (!rollProbability(0.25)) return;
+    EventSpacing spacing;
+    std::cout << "\n[RANDOM EVENT] Your body thanks you with perfect sleep!\n";
+    player.adjustEnergy(10); // Bonus
+    player.adjustHealth(5);
+    player.adjustAcademic(1);
+    player.adjustFitness(1);
+    player.adjustSocial(1);
+}
+
+// Week 4 specific events
 void week4GymOvertraining(Player &player)
 {
     if (!rollProbability(0.40)) return;
@@ -486,7 +714,6 @@ void week4GymOvertraining(Player &player)
     player.adjustFitness(-5);
 }
 
-// Week 4: Study breakthrough event.
 void week4StudyBreakthrough(Player &player)
 {
     if (!rollProbability(0.50)) return;
@@ -496,7 +723,6 @@ void week4StudyBreakthrough(Player &player)
     player.adjustEnergy(10);
 }
 
-// Week 4: Forced workout injury event.
 void week4ForcedWorkoutInjury(Player &player)
 {
     if (!rollProbability(0.20)) return;
@@ -508,7 +734,6 @@ void week4ForcedWorkoutInjury(Player &player)
     player.adjustMoney(-140);
 }
 
-// Week 4: Robbery event due to desperation.
 void week4MoneyDesperationRobbery(Player &player)
 {
     if (!rollProbability(0.50)) return;
@@ -517,7 +742,6 @@ void week4MoneyDesperationRobbery(Player &player)
     player.adjustMoney(-120);
 }
 
-// Week 4: Magic potion fitness boost event.
 void week4FinalWorkoutPotion(Player &player)
 {
     if (!rollProbability(0.20)) return;
@@ -541,7 +765,6 @@ void week4FinalWorkoutPotion(Player &player)
     }
 }
 
-// Week 4: Last-minute study burnout event.
 void week4LastMinuteStudyBurnout(Player &player)
 {
     if (!rollProbability(0.35)) return;
@@ -552,7 +775,6 @@ void week4LastMinuteStudyBurnout(Player &player)
     player.adjustHealth(-5);
 }
 
-// Week 4: Social recovery party event.
 void week4SocialRecoveryParty(Player &player)
 {
     if (!rollProbability(0.30)) return;
@@ -563,7 +785,6 @@ void week4SocialRecoveryParty(Player &player)
     player.adjustAcademic(-10);
 }
 
-// Week 4: Complete collapse due to sickness event.
 void week4CompleteCollapseSick(Player &player)
 {
     if (!rollProbability(0.25)) return;
@@ -573,7 +794,6 @@ void week4CompleteCollapseSick(Player &player)
     player.adjustEnergy(-15);
 }
 
-// Week 4: Buyer's remorse event.
 void week4EmergencyMeasuresRemorse(Player &player)
 {
     if (!rollProbability(0.40)) return;
@@ -586,7 +806,7 @@ void week4EmergencyMeasuresRemorse(Player &player)
     player.adjustFitness(-2);
 }
 
-// Week 5: Study planning research study event.
+// Week 5 specific events
 void week5StudyPlanningResearchStudy(Player &player)
 {
     if (!rollProbability(0.30)) return;
@@ -596,7 +816,6 @@ void week5StudyPlanningResearchStudy(Player &player)
     player.adjustAcademic(2);
 }
 
-// Week 5: Financial planning refund event.
 void week5FinancialPlanningRefund(Player &player)
 {
     if (!rollProbability(0.25)) return;
@@ -605,7 +824,6 @@ void week5FinancialPlanningRefund(Player &player)
     player.adjustMoney(60);
 }
 
-// Week 5: Fitness focus old injury event.
 void week5FitnessFocusOldInjury(Player &player)
 {
     if (!rollProbability(0.20)) return;
@@ -616,7 +834,6 @@ void week5FitnessFocusOldInjury(Player &player)
     player.adjustEnergy(-15);
 }
 
-// Week 5: Academic catchup extra help event.
 void week5AcademicCatchupExtraHelp(Player &player)
 {
     if (!rollProbability(0.35)) return;
@@ -625,7 +842,6 @@ void week5AcademicCatchupExtraHelp(Player &player)
     player.adjustAcademic(15);
 }
 
-// Week 5: Social rebuilding moving gig event.
 void week5SocialRebuildingMovingGig(Player &player)
 {
     if (!rollProbability(0.25)) return;
@@ -636,7 +852,6 @@ void week5SocialRebuildingMovingGig(Player &player)
     player.adjustSocial(5);
 }
 
-// Week 5: Effective studying study leader event.
 void week5EffectiveStudyingStudyLeader(Player &player)
 {
     if (player.academic <= 65) return;
@@ -648,7 +863,6 @@ void week5EffectiveStudyingStudyLeader(Player &player)
     player.adjustSocial(2);
 }
 
-// Week 5: Meaningful social getaway event.
 void week5MeaningfulSocialGetaway(Player &player)
 {
     if (!rollProbability(0.40)) return;
@@ -659,7 +873,6 @@ void week5MeaningfulSocialGetaway(Player &player)
     player.adjustMoney(-25);
 }
 
-// Week 5: Restorative perfect recovery event.
 void week5RestorativePerfectRecovery(Player &player)
 {
     if (!rollProbability(0.35)) return;
@@ -672,7 +885,6 @@ void week5RestorativePerfectRecovery(Player &player)
     player.adjustFitness(3);
 }
 
-// Week 5: Weekend prep double gig event.
 void week5WeekendPrepDoubleGig(Player &player)
 {
     if (!rollProbability(0.30)) return;
@@ -682,7 +894,6 @@ void week5WeekendPrepDoubleGig(Player &player)
     player.adjustEnergy(-25);
 }
 
-// Week 5: Stock investing outcome event.
 void week5StockInvestingOutcome(Player &player)
 {
     EventSpacing spacing;
@@ -717,7 +928,6 @@ void week5StockInvestingOutcome(Player &player)
     }
 }
 
-// Week 5: Midweek social spice event.
 void week5MidweekSocialSpice(Player &player, Relationships &rels)
 {
     EventSpacing spacing;
@@ -741,7 +951,7 @@ void week5MidweekSocialSpice(Player &player, Relationships &rels)
     }
 }
 
-// Week 6: Hackathon win event.
+// Week 6 specific events
 void week6HackathonWin(Player &player, Relationships &rels)
 {
     if (!rollProbability(0.35)) return;
@@ -752,7 +962,6 @@ void week6HackathonWin(Player &player, Relationships &rels)
     rels.interactWith("Sam (Study Buddy)", 20);
 }
 
-// Week 6: Gaming marathon therapeutic event.
 void week6GamingMarathonTherapeutic(Player &player, Relationships &rels)
 {
     if (!rollProbability(0.45)) return;
@@ -762,5 +971,29 @@ void week6GamingMarathonTherapeutic(Player &player, Relationships &rels)
     rels.interactWith("Jordan (Gamer)", 20);
 }
 
-} // namespace Events
+// New function to run general random events that can happen any week
+void runGeneralRandomEvents(Player &player, Relationships &rels)
+{
+    // These events can happen in any week with varying probabilities
+    if (rollProbability(0.15)) mysteryPackageArrives(player);
+    if (rollProbability(0.12)) academicMeltdownImminent(player);
+    if (rollProbability(0.10)) campusWifiUpgrade(player);
+    if (rollProbability(0.08)) academicMiracleStrikes(player);
+    if (rollProbability(0.10)) desperateClientAlert(player);
+    if (rollProbability(0.07)) shadyOpportunity(player);
+    if (rollProbability(0.09)) unexpectedInheritance(player);
+    if (rollProbability(0.11)) urgentFreelanceGig(player);
+    if (rollProbability(0.13)) constructionNoiseAdvisory(player);
+    
+    // Location-specific events
+    if (rollProbability(0.08)) printerBreakdown(player, rels);
+    if (rollProbability(0.06)) surpriseGymEvent(player);
+    if (rollProbability(0.05)) nearDisasterStrikes(player);
+    if (rollProbability(0.10)) studyStruggles(player);
+    if (rollProbability(0.07)) napTrap(player);
+    if (rollProbability(0.06)) legendaryGamingDrop(player, rels);
+    if (rollProbability(0.09)) noisyNeighbors(player);
+    if (rollProbability(0.08)) perfectSleep(player);
+}
 
+} // namespace Events
