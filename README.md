@@ -9,7 +9,7 @@ Venkata Sai Ruthvik Reddy NELLORE 3036384713 (ruth3760)
 
 Matthew Chow SMITHSEREE 3036452338 (MatthewSmithseree)
 
-Grace Yuhan Pui 3036136893 (gp13-dot)
+Grace Yuhan PUI 3036136893 (gp13-dot)
 
 Ingram BUDIANTO 3036440866 (IngramBudianto123)
 
