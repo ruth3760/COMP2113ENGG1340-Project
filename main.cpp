@@ -1402,36 +1402,188 @@ s.push_back({2, 1, "Dorm Room",
                  }});
 
       s.push_back({4, 3, "Various",
-                   "The week is breaking you. One more push before weekend...",
-                   {
-                       {"Final workout", "", {-25, 0, 0, 0, 2, 0},
-                      [](GameState&, Player& p, Relationships&) {
-                          if (p.fitness < 50) {
-                              std::cout << "Overtrained. You backslide.\n";
-                              p.adjustFitness(-8);
-                              p.adjustHealth(-10);
+             "The week is breaking you. One more push before the weekend...\n\n"
+             "WHAT NOW?",
+             {
+                 // Choice 1: Gym - Push Through Fatigue
+                 {"Gym - push through fatigue", "", {-35, 12, 0, 0, 0, 0},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "\n🥊 GYM: INTERVENTION TIME 🥊\n\n";
+                      std::cout << "Alex blocks your path to the weights. Their usual cool demeanor is gone.\n";
+                      std::cout << "\"Whoa there. You look like death warmed over.\"\n\n";
+
+                      // Present player with choices
+                      std::cout << "THE REAL TALK:\n";
+                      std::cout << "[1] \"I NEED THIS - IT'S THE ONLY THING KEEPING ME SANE\"\n";
+                      std::cout << "[2] \"YOU'RE RIGHT... I'M DROWNING\"\n";
+                      std::cout << "[3] \"DON'T TELL ME WHAT TO DO\"\n\n";
+
+                      int choice = promptInt(1, 3);
+
+                      if (choice == 1) {
+                          std::cout << "\nYou insist that the gym is your lifeline.\n";
+                          std::cout << "Alex sighs. 'Fine. But I'm spotting you. Every. Single. Rep.'\n";
+                          std::cout << "» Alex affinity: +12, Fitness +8, Health -5\n";
+                          rels.interactWith("Alex (Gym Crush)", 12);
+                          p.adjustFitness(8);
+                          p.adjustHealth(-5);
+                      } else if (choice == 2) {
+                          std::cout << "\nYou admit you're overwhelmed.\n";
+                          std::cout << "Alex's expression softens. 'Come on. Let's get food instead. You can talk.'\n";
+                          std::cout << "» Energy +20, Health +10, Alex affinity: +15\n";
+                          p.adjustEnergy(20);
+                          p.adjustHealth(10);
+                          rels.interactWith("Alex (Gym Crush)", 15);
+                      } else if (choice == 3) {
+                          std::cout << "\nYou snap at Alex, refusing their advice.\n";
+                          std::cout << "Alex steps back, hands up. 'Your funeral, champ.'\n";
+                          std::cout << "» Alex affinity: -20, Fitness +5, Health -15\n";
+                          rels.interactWith("Alex (Gym Crush)", -20);
+                          p.adjustFitness(5);
+                          p.adjustHealth(-15);
+                      } else {
+                          std::cout << "\nInvalid choice. Alex shakes their head and walks away.\n";
+                      }
+
+                      // Random Event: Overtraining Crisis
+                      if (roll(0.60) && choice == 1) {
+                          std::cout << "\n🎲 CRITICAL FAILURE: MUSCLE STRAIN!\n";
+                          std::cout << "The snap was audible. So was Alex's 'I told you so.'\n";
+                          std::cout << "» Health -25, Energy -40, Money -$200 (medical bills)\n";
+                          p.adjustHealth(-25);
+                          p.adjustEnergy(-40);
+                          p.adjustMoney(-200);
+                          std::cout << "» No fitness points will be added for the coming two weeks.\n";
+                          st.skipNextScenario = true; // Optional: skip next scenario as recovery
+                      }
+                  }},
+
+                 // Choice 2: Library - Midterm Panic Mode
+                 {"Library - midterm panic mode", "", {-30, 0, -5, 18, 0, 0},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "\n📚 LIBRARY: DESPERATION ALLIANCE 📚\n\n";
+                      std::cout << "Sam's study fortress has expanded. Three monitors, twelve highlighters, "
+                                   "and the look of someone who hasn't slept in 48 hours.\n";
+                      std::cout << "\"They moved the midterm up. It's tomorrow now. I'm not ready. You're not ready. We're all going to die.\"\n\n";
+
+                      // Present player with choices
+                      std::cout << "STUDY OR SURRENDER:\n";
+                      std::cout << "[1] \"MARATHON SESSION - WE CAN DO THIS\"\n";
+                      std::cout << "[2] \"QUICK REVIEW THEN MENTAL HEALTH BREAK\"\n";
+                      std::cout << "[3] \"I CAN'T DO THIS ANYMORE\"\n\n";
+
+                      int choice = promptInt(1, 3);
+
+                      if (choice == 1) {
+                          std::cout << "\nYou commit to an all-night study marathon with Sam.\n";
+                          std::cout << "Sam's eyes gleam with manic energy. 'Finally! Someone who gets it!'\n";
+                          std::cout << "» Energy -50, Academic +25, Sam affinity: +15\n";
+                          p.adjustEnergy(-50);
+                          p.adjustAcademic(25);
+                          rels.interactWith("Sam (Study Buddy)", 15);
+
+                          // Random Event: Eureka Moment
+                          if (roll(0.70)) {
+                              std::cout << "\n🎲 BREAKTHROUGH: IT ALL CLICKS!\n";
+                              std::cout << "You and Sam solve problems that should be impossible. The high is incredible.\n";
+                              std::cout << "» Academic +30, Energy +20 (adrenaline rush)\n";
+                              p.adjustAcademic(30);
+                              p.adjustEnergy(20);
                           }
-                          // Week 4 random event: magic potion offer.
-                          Events::week4FinalWorkoutPotion(p);
-                      }},
-                     {"Last-minute studying", "", {-25, 0, 0, 12, 0, 0},
-                     [](GameState&, Player& p, Relationships&) {
-                          if (p.academic < 50) {
-                              std::cout << "Burnout hits. Progress slips.\n";
-                              p.adjustAcademic(-10);
+                      } else if (choice == 2) {
+                          std::cout << "\nYou opt for a quick review followed by a mental health break.\n";
+                          std::cout << "Sam deflates. 'You're probably right. I'm losing my mind.'\n";
+                          std::cout << "» Energy -20, Academic +10, Health +5, Sam affinity: +5\n";
+                          p.adjustEnergy(-20);
+                          p.adjustAcademic(10);
+                          p.adjustHealth(5);
+                          rels.interactWith("Sam (Study Buddy)", 5);
+                      } else if (choice == 3) {
+                          std::cout << "\nYou admit defeat and walk away.\n";
+                          std::cout << "Sam stares in disbelief. 'We're in the home stretch and you're quitting?'\n";
+                          std::cout << "» Academic -15, Sam affinity: -25\n";
+                          p.adjustAcademic(-15);
+                          rels.interactWith("Sam (Study Buddy)", -25);
+                      } else {
+                          std::cout << "\nInvalid choice. Sam shakes their head and returns to studying.\n";
+                      }
+
+                      st.metSam = true;
+                  }},
+
+                 // Choice 3: Side Hustle Search
+                 {"Side hustle search", "", {-25, 0, 0, 0, 0, 0},
+                  [](GameState& st, Player& p, Relationships&) {
+                      std::cout << "\n💸 FINANCIAL PANIC ATTACK 💸\n\n";
+                      std::cout << "The campus job board looks different today - less like opportunity, more like desperation.\n";
+                      std::cout << "\"URGENT: Someone to clean the bio lab freezer - $50 (hazard pay)\"\n";
+                      std::cout << "\"QUICK CASH: Psychology experiment participants needed\"\n\n";
+
+                      // Present player with choices
+                      std::cout << "THE HUSTLE CHOICE:\n";
+                      std::cout << "[1] \"APPLY FOR EVERYTHING - SPRAY AND PRAY\"\n";
+                      std::cout << "[2] \"FOCUS ON ONE DECENT JOB\"\n";
+                      std::cout << "[3] \"ONLINE FREELANCING - PRAY FOR INTERNET MIRACLES\"\n\n";
+
+                      int choice = promptInt(1, 3);
+
+                      if (choice == 1) {
+                          std::cout << "\nYou mass-apply like your life depends on it. Because it kinda does.\n";
+                          std::cout << "» Energy -35, Employment chance: +40%\n";
+                          p.adjustEnergy(-35);
+                          if (roll(0.40)) {
+                              std::cout << "🎲 SUCCESS: JOB OFFER!\n";
+                              std::cout << "You land a part-time gig. Starting immediately.\n";
+                              std::cout << "» Money +$100/week\n";
+                              p.adjustMoney(100);
+                              st.employed = true;
+                          } else {
+                              std::cout << "🎲 FAILURE: REJECTION EMAILS\n";
+                              std::cout << "You receive rejection after rejection. Depression sets in.\n";
+                              std::cout << "» Social -5, Academic -3\n";
+                              p.adjustSocial(-5);
+                              p.adjustAcademic(-3);
                           }
-                          // Week 4 random event: mental burnout.
-                          Events::week4LastMinuteStudyBurnout(p);
-                      }},
-                     {"Social recovery", "", {-15, 0, 10, 0, 0, -12},
-                     [](GameState& st, Player& p, Relationships& rels) {
-                          if (st.metRiley) {
-                              rels.interactWith("Riley (Barista)", 10);
+                      } else if (choice == 2) {
+                          std::cout << "\nYou focus on one promising opportunity.\n";
+                          std::cout << "» Energy -20, Employment chance: +15%\n";
+                          p.adjustEnergy(-20);
+                          if (roll(0.15)) {
+                              std::cout << "🎲 SUCCESS: JOB OFFER!\n";
+                              std::cout << "You land a part-time gig. Starting immediately.\n";
+                              std::cout << "» Money +$100/week\n";
+                              p.adjustMoney(100);
+                              st.employed = true;
+                          } else {
+                              std::cout << "🎲 FAILURE: REJECTION EMAILS\n";
+                              std::cout << "You receive rejection after rejection. Depression sets in.\n";
+                              std::cout << "» Social -5, Academic -3\n";
+                              p.adjustSocial(-5);
+                              p.adjustAcademic(-3);
                           }
-                          // Week 4 random event: unexpected campus party.
-                          Events::week4SocialRecoveryParty(p);
-                      }},
-                }});
+                      } else if (choice == 3) {
+                          std::cout << "\nYou try your hand at online freelancing.\n";
+                          std::cout << "» Energy -15, Random outcome\n";
+                          p.adjustEnergy(-15);
+
+                          double outcome = roll(0.10) ? 1 : (roll(0.40) ? 2 : 3);
+                          if (outcome == 1) {
+                              std::cout << "🎲 BIG SCORE: You land a huge online gig!\n";
+                              std::cout << "» Money +$200\n";
+                              p.adjustMoney(200);
+                          } else if (outcome == 2) {
+                              std::cout << "🎲 SMALL WIN: You make a little extra cash.\n";
+                              std::cout << "» Money +$50\n";
+                              p.adjustMoney(50);
+                          } else {
+                              std::cout << "🎲 NOTHING: No responses, no luck. Better try again later.\n";
+                          }
+                      } else {
+                          std::cout << "\nInvalid choice. You leave the job board empty-handed.\n";
+                      }
+                  }},
+             }});
+
 
     s.push_back({4, 4, "Dorm Room",
                  "Friday night. You're drained. Choose recovery.",
@@ -3157,38 +3309,38 @@ void applyWeekEnd(int week, GameState& state, Player& player, Relationships& rel
 std::pair<std::string, std::string> endingDescriptionFromStats(const Player& p)
 {
     bool ultraChad =
-        p.money   > 2000 &&
-        p.fitness > 80   &&
-        p.social  > 80   &&
-        p.academic > 80  &&
-        p.health  > 80;
+        p.money   > 1200 &&
+        p.fitness > 70   &&
+        p.social  > 70   &&
+        p.academic > 70  &&
+        p.health  > 70;
 
     bool balanced =
-        p.money   > 1000 &&
-        p.health  > 60   &&
-        p.energy  > 60   &&
-        p.social  > 60   &&
-        p.academic > 60  &&
-        p.fitness > 60;
+        p.money   > 900 &&
+        p.health  > 50   &&
+        p.energy  > 50   &&
+        p.social  > 50   &&
+        p.academic > 50  &&
+        p.fitness > 50;
 
     bool workaholic =
-        p.money   > 3000 &&
-        p.social  < 40   &&
-        p.fitness < 40;
+        p.money   > 1500 &&
+        p.social  < 50   &&
+        p.fitness < 50;
 
     bool gymBro =
-        p.fitness > 90   &&
+        p.fitness > 80   &&
         p.academic < 50  &&
-        p.money   < 500;
+        p.money   < 600;
 
     bool noLife =
-        p.academic > 90  &&
-        p.social   < 30  &&
-        p.fitness  < 30;
+        p.academic > 80  &&
+        p.social   < 50  &&
+        p.fitness  < 40;
 
     bool socialButterfly =
-        p.social  > 90   &&
-        p.money   < 300  &&
+        p.social  > 80   &&
+        p.money   < 500  &&
         p.academic < 50;
 
     int below40 = 0;
