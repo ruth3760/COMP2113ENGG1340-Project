@@ -1,6 +1,9 @@
 #include "relationships.h"
 #include <algorithm>
 
+// Relationships::Relationships()
+// Initializes the relationship tracker with the four main NPCs and a baseline affinity.
+// Input: none. Output: Relationships object containing Alex, Sam, Riley, and Jordan with starting affinity.
 Relationships::Relationships()
 {
     // seed some NPCs (names taken from the design doc)
@@ -10,6 +13,9 @@ Relationships::Relationships()
     npcs.push_back({"Jordan (Gamer)", 20});
 }
 
+// Relationships::interactWith()
+// Applies an affinity change to the NPC whose name contains the given substring, or adds a new NPC.
+// Input: name fragment to search for and signed effect to apply. Output: Matching NPC affinity updated and clamped.
 void Relationships::interactWith(const std::string &name, int effect)
 {
     for (auto &n : npcs) {
