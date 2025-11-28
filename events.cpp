@@ -17,6 +17,7 @@ static bool seed_done = [](){ srand((unsigned)time(nullptr)); return true; }();
 namespace {
 
 // Local probability roll helper for events.
+// Returns true if a random number between 0 and 1 is less than the given probability.
 bool rollProbability(double probability)
 {
     double r = static_cast<double>(rand()) / RAND_MAX;
@@ -24,6 +25,7 @@ bool rollProbability(double probability)
 }
 
 // Helper to add a blank line before and after event text.
+// This struct ensures consistent spacing around event messages.
 struct EventSpacing {
     EventSpacing()  { std::cout << std::endl; }
     ~EventSpacing() { std::cout << std::endl; }
@@ -33,6 +35,8 @@ struct EventSpacing {
 
 namespace Events {
 
+// Generates a list of predefined weekly events with their probabilities and effects.
+// Each event contains a description, probability, and a lambda function for applying effects to the player.
 std::vector<Event> generateWeeklyEvents()
 {
     std::vector<Event> out;
@@ -52,11 +56,14 @@ std::vector<Event> generateWeeklyEvents()
     return out;
 }
 
+// Rolls to determine if a specific event occurs based on its probability.
 bool rollEvent(const Event &e)
 {
     return rollProbability(e.probability);
 }
 
+// Handles random events specific to Week 1.
+// Includes friend phone call, router fried, and evening mini-choice events.
 void maybeRunWeek1RandomEvent(
     int slot,
     int currentWeek,
@@ -126,6 +133,8 @@ void maybeRunWeek1RandomEvent(
     }
 }
 
+// Handles random events specific to the end of each week.
+// Includes special events for each week and their associated effects on the player and relationships.
 void runWeekEndRandomEvents(
     int week,
     const std::string &relationshipPath,
