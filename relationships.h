@@ -12,8 +12,15 @@ struct NPC {
 class Relationships {
 public:
     std::vector<NPC> npcs;
+
+    // Relationships()
+    // Constructs a relationship tracker and seeds it with the core NPCs from the design doc.
+    // Input: none. Output: Relationships instance with four default NPC entries.
     Relationships();
 
+    // interactWith()
+    // Modifies affinity for a named NPC, creating one if it does not exist.
+    // Input: NPC name (substring match) and signed affinity effect. Output: updated affinity clamped to [0,100].
     void interactWith(const std::string &name, int effect);
 };
 

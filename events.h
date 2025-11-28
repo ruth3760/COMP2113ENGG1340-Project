@@ -16,11 +16,22 @@ struct Event {
 };
 
 namespace Events {
+    // generateWeeklyEvents()
+    // Builds a small pool of generic random events that can trigger during the week.
+    // Input: none. Output: vector of Event definitions with names, descriptions, probabilities, and effects.
     std::vector<Event> generateWeeklyEvents();
+
+    // rollEvent()
+    // Rolls whether a specific Event occurs based on its probability.
+    // Input: Event with probability field set. Output: true if the event should trigger.
     bool rollEvent(const Event &e);
 
     // Week 1 in-between-scenario random events.
     // The boolean flags are passed by reference from GameState.
+    // maybeRunWeek1RandomEvent()
+    // Potentially runs one of several special random events during week 1, updating the flags so each is unique.
+    // Input: time slot index, currentWeek, three booleans for event usage, and Player to modify.
+    // Output: booleans updated and Player stats changed if an event fires; no effect otherwise.
     void maybeRunWeek1RandomEvent(
         int slot,
         int currentWeek,
@@ -31,6 +42,10 @@ namespace Events {
     );
 
     // Week-end random events tied to the week index and relationship path.
+    // runWeekEndRandomEvents()
+    // Handles larger, scripted random events that fire at the end of specific weeks.
+    // Input: week number, relationship path keyword, partner name, Player, and Relationships.
+    // Output: modifies stats and affinities according to the random outcomes.
     void runWeekEndRandomEvents(
         int week,
         const std::string &relationshipPath,
@@ -40,6 +55,8 @@ namespace Events {
     );
 
     // Week 4 scenario-level random events.
+    // Each function below may or may not fire based on its own probability,
+    // directly adjusting the Player's stats when it does.
     void week4GymOvertraining(Player &player);
     void week4StudyBreakthrough(Player &player);
     void week4ForcedWorkoutInjury(Player &player);

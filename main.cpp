@@ -3197,8 +3197,11 @@ void runGame()
     SaveGame::clear();
 }
 
+// main()
+// Entry point of the program that starts the main game loop.
+// Input: none. Output: process exit code (0 on normal termination).
 int main()
-{
-    runGame();
-    return 0;
-}
+  {
+      runGame();
+      return 0;
+  }

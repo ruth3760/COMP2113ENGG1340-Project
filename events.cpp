@@ -9,21 +9,27 @@
 
 using namespace std;
 
+// promptInt()
 // Forward declaration for the shared input helper defined in main.cpp.
+// Input: inclusive minimum and maximum integer values. Output: validated integer read from stdin.
 int promptInt(int min, int max);
 
 static bool seed_done = [](){ srand((unsigned)time(nullptr)); return true; }();
 
 namespace {
 
-// Local probability roll helper for events.
+// rollProbability()
+// Local helper that rolls against a probability using std::rand().
+// Input: probability value in [0.0, 1.0]. Output: true if the roll succeeds.
 bool rollProbability(double probability)
 {
     double r = static_cast<double>(rand()) / RAND_MAX;
     return r < probability;
 }
 
-// Helper to add a blank line before and after event text.
+// EventSpacing
+// Small RAII helper that inserts blank lines around event text for readability.
+// Input: none. Output: writes newlines on construction and destruction.
 struct EventSpacing {
     EventSpacing()  { std::cout << std::endl; }
     ~EventSpacing() { std::cout << std::endl; }
