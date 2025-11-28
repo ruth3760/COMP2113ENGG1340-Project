@@ -138,7 +138,7 @@ int promptInt(int min, int max)
 // Input/Output: uses stdin, no return value.
 void waitForEnter()
 {
-    std::cout << "[Press any key to continue...]\n";
+    std::cout << "[Press ENTER to continue...]\n";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
@@ -234,7 +234,7 @@ void enforceCriticalRules(GameState& state, Player& player)
         player.adjustEnergy(20);
     }
 
-    if (player.energy <= 10) {
+    if (player.energy <= 0) {
         std::cout << "[WARNING] COLLAPSE FROM EXHAUSTION! Forced sleep, skipping next scenario.\n";
         player.adjustEnergy(40);
         state.skipNextScenario = true;
@@ -432,100 +432,418 @@ std::vector<Scenario> buildScenarios()
                  }});
 
     // Week 2
-    s.push_back({2, 1, "Dorm Room",
-                 "Monday again. The summer sun is already bright. You wake up feeling...",
-                 {
-                     {"Hit the gym early", "", {-25, 0, 0, 0, 8, -2},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          st.visitedGym = true;
-                          rels.interactWith("Alex (Gym Crush)", 8);
-                          // Positive random event: free personal training session giveaway.
-                          if (roll(0.30)) {
-                              std::cout << "Gym manager announces a free personal training session giveaway... and you win!\n";
-                              p.adjustFitness(10);
+s.push_back({2, 1, "Dorm Room",
+             "Monday again. The summer sun is already bright. You wake up feeling...",
+             {
+                 // Choice 1: Hit the Gym Early
+                 {"Hit the gym early", "", {-25, 0, 0, 0, 8, -2},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "💪 LOCATION: GYM - MORNING SESSION 💪\n\n";
+                      std::cout << "The 7 AM crowd is sparse but terrifyingly dedicated. And there's ALEX, "
+                                   "already drenched in sweat and looking like a Greek god.\n\n";
+
+                      std::cout << "ALEX: \"Hey! Sorry to bother you, but do you mind spotting me for a sec? "
+                                   "This is my PR attempt.\"\n\n";
+
+                      // Present player with choices (hide consequences)
+                      std::cout << "YOUR RESPONSE:\n";
+                      std::cout << "[1] \"SURE, NO PROBLEM!\"\n";
+                      std::cout << "[2] \"SORRY, IN THE MIDDLE OF MY SET\"\n\n";
+
+                      int choice;
+                      std::cout << "Enter your choice (1 or 2): ";
+                      std::cin >> choice;
+
+                      if (choice == 1) {
+                          // Player chooses to help Alex
+                          std::cout << "\nYou agree to help Alex.\n";
+                          std::cout << "Alex shares pro tips between sets. You feel initiated.\n";
+                          std::cout << "» Alex affinity: +8\n";
+                          std::cout << "» Fitness +3 bonus\n";
+                          rels.interactWith("Alex (Gym Crush)", 8); // Increase Alex affinity
+                          p.adjustFitness(3); // Small fitness bonus
+                      } else if (choice == 2) {
+                          // Player declines to help Alex
+                          std::cout << "\nYou decline, saying you're in the middle of your own set.\n";
+                          std::cout << "Alex nods coldly. The gym atmosphere suddenly feels... competitive.\n";
+                          std::cout << "» Alex affinity: -5\n";
+                          std::cout << "» Fitness +5 bonus\n";
+                          rels.interactWith("Alex (Gym Crush)", -5); // Decrease Alex affinity
+                          p.adjustFitness(5); // Larger fitness bonus
+                      } else {
+                          std::cout << "\nInvalid choice. Alex walks away, disappointed.\n";
+                      }
+
+                      // Mark gym as visited
+                      st.visitedGym = true;
+
+                      // Random Event: Free personal training session
+                      if (roll(0.30)) { // 30% chance
+                          std::cout << "\n🎉 SURPRISE GYM EVENT! 🎉\n";
+                          std::cout << "The gym manager approaches: \"We're doing a free personal training session "
+                                       "giveaway for our most dedicated members... and YOU just won!\"\n";
+                          std::cout << "🏆 REWARD: Fitness +10, Health +5\n";
+                          std::cout << "\"Your form gets corrected in ways you didn't know were possible.\"\n";
+                          p.adjustFitness(10); // Boost fitness
+                          p.adjustHealth(5);   // Boost health
+                      }
+                  }},
+
+                 // Choice 2: Review Summer Course Materials
+                 {"Review summer course materials", "", {-20, 0, 0, 12, 0, 0},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "📚 LOCATION: LIBRARY - MORNING STUDY 📚\n\n";
+                      std::cout << "The summer quiet is golden. Only the most determined scholars remain.\n\n";
+
+                      // Random Event: Printer breakdown
+                      if (roll(0.50)) { // 50% chance
+                          std::cout << "*BZZT BZZT* The library printer is having a meltdown. And who's stuck there?\n";
+                          std::cout << "SAM, looking like they're about to commit acts of violence against machinery.\n\n";
+
+                          std::cout << "SAM: \"Hey! Do you know what's going on with this thing today? I have "
+                                       "50 pages due in an hour and this monster ate my flash drive.\"\n\n";
+
+                          // Present player with choices (hide consequences)
+                          std::cout << "YOUR MOVE:\n";
+                          std::cout << "[1] \"LET ME HELP FIX IT\"\n";
+                          std::cout << "[2] \"SORRY, CAN'T HELP\"\n\n";
+
+                          int choice;
+                          std::cout << "Enter your choice (1 or 2): ";
+                          std::cin >> choice;
+
+                          if (choice == 1) {
+                              std::cout << "\nYou step in and help fix the printer. After some effort, it works again!\n";
+                              std::cout << "Sam looks at you with newfound respect.\n";
+                              std::cout << "» Energy -15\n";
+                              std::cout << "» Sam affinity: +7\n";
+                              std::cout << "» Academic +5\n";
+                              p.adjustEnergy(-15); // Energy penalty for helping
+                              rels.interactWith("Sam (Study Buddy)", 7); // Increase Sam affinity
+                              p.adjustAcademic(5); // Academic bonus
+                          } else if (choice == 2) {
+                              std::cout << "\nYou decline to help. Sam glares at the machine in frustration.\n";
+                              std::cout << "» Sam affinity: -3\n";
+                              std::cout << "» Academic +10\n";
+                              rels.interactWith("Sam (Study Buddy)", -3); // Decrease Sam affinity
+                              p.adjustAcademic(10); // Academic bonus for focusing on your own work
+                          } else {
+                              std::cout << "\nInvalid choice. Sam continues to struggle with the printer.\n";
                           }
-                      }},
-                     {"Review summer course materials", "", {-20, 0, 0, 12, 0, 0},
-                      [](GameState& st, Player&, Relationships& rels) {
-                          st.metSam = true;
-                          rels.interactWith("Sam (Study Buddy)", 7);
-                      }},
-                     {"Grab coffee and socialize", "", {-10, 0, 8, 0, 0, -5},
-                      [](GameState& st, Player& p, Relationships& rels) {
+                      } else {
+                          std::cout << "The library is peaceful. You focus on your studies without interruption.\n";
+                          std::cout << "» Academic +12\n";
+                          p.adjustAcademic(12); // Academic bonus for uninterrupted study
+                      }
+
+                      // Mark that the player has met Sam
+                      st.metSam = true;
+                  }},
+
+                 // Choice 3: Grab Coffee and Socialize
+                 {"Grab coffee and socialize", "", {-10, 0, 8, 0, 0, -5},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "☕ LOCATION: HALL COMMON AREA ☕\n\n";
+                      std::cout << "The morning crowd is buzzing. And there's RILEY, looking surprisingly "
+                                   "awake and productive.\n\n";
+
+                      std::cout << "RILEY: \"Morning! You won't BELIEVE the drama from my shift yesterday. "
+                                   "This couple had a full-blown breakup over avocado toast.\"\n\n";
+
+                      // Present player with choices (hide consequences)
+                      std::cout << "YOUR RESPONSE:\n";
+                      std::cout << "[1] \"That sounds wild! Tell me more.\"\n";
+                      std::cout << "[2] \"Sorry, I’m in a rush today.\"\n\n";
+
+                      int choice;
+                      std::cout << "Enter your choice (1 or 2): ";
+                      std::cin >> choice;
+
+                      if (choice == 1) {
+                          std::cout << "\nYou sit down and listen to Riley's story. It's hilarious!\n";
+                          std::cout << "» Riley affinity: +9\n";
+                          std::cout << "» Social +5\n";
                           st.metRiley = true;
-                          rels.interactWith("Riley (Barista)", 9);
-                          // Additional social comfort bonus from consistent morning ritual.
-                          p.adjustSocial(3);
-                      }},
-                 }});
+                          rels.interactWith("Riley (Barista)", 9); // Increase Riley affinity
+                          p.adjustSocial(5); // Social bonus
+                      } else if (choice == 2) {
+                          std::cout << "\nYou excuse yourself and leave. Riley seems a little disappointed.\n";
+                          std::cout << "» Riley affinity: -2\n";
+                          rels.interactWith("Riley (Barista)", -2); // Decrease Riley affinity
+                      } else {
+                          std::cout << "\nInvalid choice. Riley shrugs and goes back to work.\n";
+                      }
+                  }},
+             }});
 
     s.push_back({2, 2, "Various",
-                 "Midday energy slump hits. Time to decide your afternoon focus.",
-                 {
-                     {"Intense workout session", "", {-20, 2, 0, 0, 10, 0},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          st.visitedGym = true;
+             "Midday energy slump hits. Time to decide your afternoon focus.",
+             {
+                 // Choice 1: Intense Workout Session
+                 {"Intense workout session", "", {-30, 2, 0, 0, 12, 3},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      (void)st; // Suppress unused parameter warning
+
+                      std::cout << "💥 LOCATION: GYM 💥\n\n";
+                      std::cout << "Alex notices you pushing heavier weights. \"Need a spot for that top set?\"\n";
+                      std::cout << "They step in just as your form starts to break.\n\n";
+
+                      std::cout << "ALEX: \"WOAH! Easy there, killer. Almost lost you there.\"\n";
+                      std::cout << "\"That was 2 seconds from being a very expensive hospital visit,\" Alex says, their usual cool demeanor replaced with genuine concern.\n\n";
+
+                      // Present player with choices (hide consequences)
+                      std::cout << "HOW DO YOU REACT?\n";
+                      std::cout << "[1] \"THANKS... I THOUGHT I HAD IT\"\n";
+                      std::cout << "[2] \"I WAS FINE! I HAD IT UNDER CONTROL\"\n";
+                      std::cout << "[3] \"THAT WAS CLOSE... CAN YOU SHOW ME WHAT I DID WRONG?\"\n";
+                      std::cout << "[4] \"I OWE YOU ONE - LET ME BUY YOU A PROTEIN SHAKE\"\n\n";
+
+                      int choice;
+                      std::cout << "Enter your choice (1, 2, 3, or 4): ";
+                      std::cin >> choice;
+
+                      if (choice == 1) {
+                          std::cout << "\nYou thank Alex, admitting you thought you had it.\n";
+                          std::cout << "» Alex affinity: +12\n";
+                          std::cout << "» Fitness +4 (learning from mistake)\n";
+                          rels.interactWith("Alex (Gym Crush)", 12);
+                          p.adjustFitness(4);
+                      } else if (choice == 2) {
+                          std::cout << "\nYou insist you were fine and had it under control.\n";
+                          std::cout << "Alex's expression hardens. \"Fine. Next time, don't expect me to save you.\"\n";
+                          std::cout << "» Alex affinity: -8\n";
+                          std::cout << "» Health -5 (adrenaline crash), Fitness -3\n";
+                          rels.interactWith("Alex (Gym Crush)", -8);
+                          p.adjustHealth(-5);
+                          p.adjustFitness(-3);
+                      } else if (choice == 3) {
+                          std::cout << "\nYou admit it was close and ask Alex to show you what you did wrong.\n";
+                          std::cout << "Alex's eyes light up. \"Finally, someone who wants to learn!\" They spend 30 minutes coaching you.\n";
+                          std::cout << "» Alex affinity: +15\n";
+                          std::cout << "» Fitness +8 (immediate technique improvement)\n";
+                          rels.interactWith("Alex (Gym Crush)", 15);
+                          p.adjustFitness(8);
+                      } else if (choice == 4) {
+                          std::cout << "\nYou offer to buy Alex a protein shake as thanks.\n";
+                          std::cout << "Alex smiles. \"Deal. But next time, ask for a spot BEFORE you're about to die.\"\n";
+                          std::cout << "» Alex affinity: +10, Money -$8, Social +5\n";
                           rels.interactWith("Alex (Gym Crush)", 10);
-                          // Small positive random event: free protein shaker giveaway.
-                          if (roll(0.20)) {
-                              std::cout << "Gym is giving out free protein shakers today. Nice little boost!\n";
-                              p.adjustFitness(1);
-                          }
-                      }},
-                     {"Library deep dive", "", {-25, 0, 0, 15, 0, 0},
-                      [](GameState& st, Player& p, Relationships&) {
-                          // 50% chance the library is too crowded to study effectively.
-                          if (roll(0.50)) {
-                              std::cout << "The library is surprisingly crowded. You end up going home instead.\n";
-                              p.adjustAcademic(-7);
-                          }
-                          st.metSam = true;
-                      }},
-                     {"Take a nap", "", {35, 0, 0, 0, 0, 0},
-                      [](GameState&, Player& p, Relationships&) {
-                          if (roll(0.35)) {
-                              std::cout << "YOU DOOMSCROLLED INSTEAD OF SLEEPING!!!.\n";
-                              p.adjustEnergy(-15);
-                          }
-                      }},
-                 }});
+                          p.adjustMoney(-8);
+                          p.adjustSocial(5);
+                      } else {
+                          std::cout << "\nInvalid choice. Alex shrugs and walks away.\n";
+                      }
+
+                      // Random Event: Near-disaster strikes
+                      if (roll(0.20)) { // 20% chance
+                          std::cout << "\n💀 NEAR-DISASTER STRIKES 💀\n";
+                          std::cout << "Your grip slips! The barbell tumbles toward your chest...\n";
+                          std::cout << "ALEX'S REFLEXES SAVE YOU by centimeters.\n";
+                          std::cout << "Alex says, \"Maybe we should stick to lighter weights today,\" looking pale.\n";
+                          std::cout << "» Health -5 (adrenaline crash), Energy -10\n";
+                          p.adjustHealth(-5);
+                          p.adjustEnergy(-10);
+                      }
+                  }},
+
+                 // Choice 2: Library Deep Dive
+                 {"Library deep dive", "", {-25, 0, 0, 18, 0, 0},
+                  [](GameState& st, Player& p, Relationships&) {
+                      (void)st; // Suppress unused parameter warning
+
+                      std::cout << "📖 LOCATION: LIBRARY STUDY ROOM 📖\n\n";
+                      std::cout << "The library is quiet, and you find a nice spot to settle in.\n\n";
+
+                      // Random Event: Library is too crowded
+                      if (roll(0.50)) { // 50% chance
+                          std::cout << "The library is PACKED. Every seat is taken, every outlet occupied.\n";
+                          std::cout << "You feel frustrated and distracted.\n";
+                          std::cout << "» Academic -7 (distracted environment), Energy -5 (frustration)\n";
+                          p.adjustAcademic(-7);
+                          p.adjustEnergy(-5);
+                      } else {
+                          std::cout << "You power through the brain fog and make great progress on your studies.\n";
+                          std::cout << "» Academic +18\n";
+                          p.adjustAcademic(18);
+                      }
+                  }},
+
+                 // Choice 3: Take a Nice Nap
+                 {"Take a nap", "", {25, 0, 0, 0, 0, 0},
+                  [](GameState& st, Player& p, Relationships&) {
+                      (void)st; // Suppress unused parameter warning
+
+                      std::cout << "😴 LOCATION: DORM 😴\n\n";
+                      std::cout << "You decide to rest and recharge your energy.\n\n";
+
+                      // Random Event: The Nap Trap
+                      if (roll(0.35)) { // 35% chance
+                          std::cout << "😪 THE NAP TRAP 😪\n";
+                          std::cout << "\"Just 20 minutes,\" you tell yourself...\n";
+                          std::cout << "*3 hours later* You wake up disoriented, drooling on your textbook.\n";
+                          std::cout << "» Energy +15 (instead of +25), Academic -3\n";
+                          p.adjustEnergy(15);
+                          p.adjustAcademic(-3);
+                      } else {
+                          std::cout << "You wake up feeling refreshed and ready to tackle the rest of the day.\n";
+                          std::cout << "» Energy +25\n";
+                          p.adjustEnergy(25);
+                      }
+                  }},
+             }});
+
 
     s.push_back({2, 3, "Various",
-                 "Late afternoon. The day is winding down but there's still time for...",
-                 {
-                     {"Evening gym session", "", {-20, 3, 0, 0, 6, 0},
-                      [](GameState&, Player& p, Relationships&) {
-                          // Positive random event: empty gym lets you experiment with new equipment.
-                          if (roll(0.20)) {
-                              std::cout << "Gym is unexpectedly empty — perfect time to try new equipment.\n";
-                              p.adjustFitness(4);
-                              p.adjustHealth(2);
+             "Late afternoon. The day is winding down but there's still time for...",
+             {
+                 // Choice 1: Evening Gym Session
+                 {"Evening gym session", "", {-20, 3, 0, 0, 8, 2},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      (void)st; // Suppress unused parameter warning
+
+                      std::cout << "💪 LOCATION: GYM 💪\n\n";
+                      std::cout << "Alex is doing cool-down stretches when you arrive.\n";
+                      std::cout << "\"Hey, some of us are doing a weekend hiking trip to Dragon's Back. Thought you might be interested? You've been putting in the work.\"\n\n";
+
+                      // Present player with choices (hide consequences)
+                      std::cout << "💖 RELATIONSHIP DECISION:\n";
+                      std::cout << "[1] \"I'M IN!\"\n";
+                      std::cout << "[2] \"MAYBE NEXT TIME\"\n";
+                      std::cout << "[3] \"HIKING? IN THIS HEAT?\"\n\n";
+
+                      int choice;
+                      std::cout << "Enter your choice (1, 2, or 3): ";
+                      std::cin >> choice;
+
+                      if (choice == 1) {
+                          std::cout << "\nYou eagerly agree to join the hiking trip.\n";
+                          std::cout << "» Alex affinity: +12, Energy -15 (weekend plans locked)\n";
+                          rels.interactWith("Alex (Gym Crush)", 12);
+                          p.adjustEnergy(-15);
+                      } else if (choice == 2) {
+                          std::cout << "\nYou politely decline but express interest for another time.\n";
+                          std::cout << "» Alex affinity: +3\n";
+                          rels.interactWith("Alex (Gym Crush)", 3);
+                      } else if (choice == 3) {
+                          std::cout << "\nYou laugh and point out how hot it is for hiking.\n";
+                          std::cout << "Alex frowns slightly, disappointed.\n";
+                          std::cout << "» Alex affinity: -8\n";
+                          rels.interactWith("Alex (Gym Crush)", -8);
+                      } else {
+                          std::cout << "\nInvalid choice. Alex shrugs and walks away.\n";
+                      }
+
+                      std::cout << "\nYou finish your workout feeling accomplished.\n";
+                      std::cout << "» Fitness +8, Health +2\n";
+                      p.adjustFitness(8);
+                      p.adjustHealth(2);
+                  }},
+
+                 // Choice 2: Quick Study Review
+                 {"Quick study review", "", {-15, 0, 0, 10, 0, 0},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "📖 LOCATION: LIBRARY 📖\n\n";
+                      std::cout << "The evening library is peaceful, the golden hour light filtering through dusty windows. You review today's material while it's still fresh, and the concepts click into place more easily.\n\n";
+
+                      // Check if the player has met Sam
+                      if (st.metSam) {
+                          std::cout << "Suddenly, a shadow falls over your notes. You look up to see SAM standing there, holding two steaming mugs and looking unusually hesitant.\n";
+                          std::cout << "\"Mind if I join you?\" Sam asks quietly. \"The construction noise is driving me insane in my usual spot.\"\n\n";
+
+                          // Present player with choices (hide consequences)
+                          std::cout << "HOW DO YOU RESPOND?\n";
+                          std::cout << "[1] \"OF COURSE! I COULD USE THE COMPANY\"\n";
+                          std::cout << "[2] \"SORRY, I REALLY NEED TO FOCUS SOLO TONIGHT\"\n";
+                          std::cout << "[3] \"ACTUALLY, I WAS STUCK ON THIS PROBLEM - CAN YOU HELP?\"\n";
+                          std::cout << "[4] \"ONLY IF YOU PROMISE NOT TO JUDGE MY TERRIBLE HANDWRITING\"\n\n";
+
+                          int choice;
+                          std::cout << "Enter your choice (1, 2, 3, or 4): ";
+                          std::cin >> choice;
+
+                          if (choice == 1) {
+                              std::cout << "\nYou invite Sam to join you. Their tense shoulders relax as they sit down.\n";
+                              std::cout << "\"Thanks. Sometimes studying alone gets... lonely.\"\n";
+                              std::cout << "» Sam affinity: +8, Academic +5\n";
+                              rels.interactWith("Sam (Study Buddy)", 8);
+                              p.adjustAcademic(5);
+                          } else if (choice == 2) {
+                              std::cout << "\nYou apologize and explain that you need to focus solo tonight.\n";
+                              std::cout << "Sam nods stiffly. \"Right. Of course.\" They retreat quickly, embarrassment evident.\n";
+                              std::cout << "» Sam affinity: -5, Academic +3\n";
+                              rels.interactWith("Sam (Study Buddy)", -5);
+                              p.adjustAcademic(3);
+                          } else if (choice == 3) {
+                              std::cout << "\nYou admit you were stuck on a problem and ask for Sam's help.\n";
+                              std::cout << "Sam's eyes light up. \"Finally, a real challenge!\" They pull up a chair eagerly.\n";
+                              std::cout << "» Sam affinity: +12, Academic +10\n";
+                              rels.interactWith("Sam (Study Buddy)", 12);
+                              p.adjustAcademic(10);
+                          } else if (choice == 4) {
+                              std::cout << "\nYou joke about your terrible handwriting, and Sam cracks a rare smile.\n";
+                              std::cout << "\"Your secret is safe with me. Mine looks like chicken scratch too.\"\n";
+                              std::cout << "» Sam affinity: +6, Social +3, Academic +4\n";
+                              rels.interactWith("Sam (Study Buddy)", 6);
+                              p.adjustSocial(3);
+                              p.adjustAcademic(4);
+                          } else {
+                              std::cout << "\nInvalid choice. Sam leaves, looking disappointed.\n";
                           }
-                      }},
-                     {"Quick study review", "", {-15, 0, 0, 8, 0, 0},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          if (st.metSam) {
-                              rels.interactWith("Sam (Study Buddy)", 2);
-                          }
-                          // Negative random event: brain fog from over-studying.
-                          if (roll(0.25)) {
-                              std::cout << "Brain fog sets in — you've been studying too long.\n";
-                              p.adjustAcademic(-4); // roughly halves the gain
-                              p.adjustEnergy(-8);
-                          }
-                      }},
-                     {"Wind down socially", "", {-10, 0, 6, 0, 0, -8},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          st.metRiley = true;
-                          rels.interactWith("Riley (Barista)", 7);
-                          if (roll(0.3)) {
-                              std::cout << "You join alumni for drinks.\n";
-                              p.adjustMoney(-20);
-                              p.adjustSocial(14); // total +20 including base
-                              p.adjustHealth(-3);
-                          }
-                      }},
-                 }});
+                      } else {
+                          std::cout << "You study alone and make steady progress.\n";
+                          std::cout << "» Academic +10\n";
+                          p.adjustAcademic(10);
+                      }
+                  }},
+
+                 // Choice 3: Wind Down Socially
+                 {"Wind down socially", "", {-10, 0, 8, 0, 0, -8},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "🍹 LOCATION: SOCIAL SPOT 🍹\n\n";
+                      std::cout << "People are decompressing from the day. The mood is relaxed and friendly, filled with the comfortable chaos of board games, shared laughter, and the sweet scent of overpriced coffee.\n\n";
+
+                      // Mark that the player has met Riley
+                      st.metRiley = true;
+                      std::cout << "You run into Riley, who greets you with a warm smile.\n";
+
+                      // Present player with choices (hide consequences)
+                      std::cout << "WHAT'S YOUR APPROACH?\n";
+                      std::cout << "[1] \"JOIN THE CIRCLE - IMMEDIATELY ENGAGE\"\n";
+                      std::cout << "[2] \"HANG BACK AND OBSERVE FIRST\"\n";
+                      std::cout << "[3] \"HELP RILEY WITH DRINKS/FOOD\"\n";
+                      std::cout << "[4] \"STAY BRIEFLY THEN EXIT GRACEFULLY\"\n\n";
+
+                      int choice;
+                      std::cout << "Enter your choice (1, 2, 3, or 4): ";
+                      std::cin >> choice;
+
+                      if (choice == 1) {
+                          std::cout << "\nYou slide right into the conversation, instantly becoming part of the group dynamic.\n";
+                          std::cout << "» Riley affinity: +10, Social +8\n";
+                          rels.interactWith("Riley (Barista)", 10);
+                          p.adjustSocial(8);
+                      } else if (choice == 2) {
+                          std::cout << "\nYou take a seat at the edge, listening and learning the group dynamics before jumping in.\n";
+                          std::cout << "» Riley affinity: +5, Social +3\n";
+                          rels.interactWith("Riley (Barista)", 5);
+                          p.adjustSocial(3);
+                      } else if (choice == 3) {
+                          std::cout << "\nYou assist Riley in managing the refreshments, earning immediate gratitude and respect.\n";
+                          std::cout << "» Riley affinity: +12, Money -$8, Social +5\n";
+                          rels.interactWith("Riley (Barista)", 12);
+                          p.adjustMoney(-8);
+                          p.adjustSocial(5);
+                      } else if (choice == 4) {
+                          std::cout << "\nYou make a good impression but protect your energy for later.\n";
+                          std::cout << "» Riley affinity: +3, Energy +5\n";
+                          rels.interactWith("Riley (Barista)", 3);
+                          p.adjustEnergy(5);
+                      } else {
+                          std::cout << "\nInvalid choice. Riley shrugs and continues chatting with the group.\n";
+                      }
+                  }},
+             }});
+
 
     s.push_back({2, 4, "Dorm Room",
                  "Evening settles in. Your phone shows various notifications. Time to...",
@@ -556,6 +874,8 @@ std::vector<Scenario> buildScenarios()
                            }
                        }},
                  }});
+
+
 
       // Week 3
     s.push_back({3, 1, "Dorm Room",
@@ -667,99 +987,221 @@ std::vector<Scenario> buildScenarios()
                  }});
 
     s.push_back({3, 2, "Various",
-                 "Midday approaches. Your energy is holding up. Focus on...",
-                 {
-                     {"Serious training", "", {-30, 2, 0, 0, 10, 0},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          std::cout << "\n[LOCATION: Gym]\n";
-                          std::cout << "Alex leads you through an intense circuit training session.\n";
-                          std::cout << "Between sets, they cheer you on and correct your form.\n";
-                          st.visitedGym = true;
-                          rels.interactWith("Alex (Gym Crush)", 8);
-                          // RANDOM EVENT - Negative: minor muscle strain.
-                          if (roll(0.20)) {
-                              std::cout << "\n[RANDOM EVENT] Minor muscle strain from overexertion!\n";
-                              std::cout << "Maybe you should have warmed up better...\n";
-                              p.adjustFitness(-15);
-                              p.adjustHealth(-5);
-                              p.adjustEnergy(-10);
+             "The summer grind has become your new normal. Your body automatically wakes up at the same time. The campus feels like home now.\n\n"
+             "But something's different today... the energy feels charged.\n\n"
+             "MORNING AGENDA:",
+             {
+                 // Choice 1: Gym Workout
+                 {"Gym workout", "", {-25, 8, 0, 0, 0, 0},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "\n💪 LOCATION: GYM 💪\n\n";
+                      std::cout << "Alex drops from the pull-up bar, barely winded.\n";
+                      std::cout << "\"Hey, I was hoping you'd come. Some of us are doing a weekend hiking trip to Dragon's Back. Thought you might be interested? You've earned it.\"\n\n";
+
+                      // Present player with choices (hide consequences)
+                      std::cout << "💖 RELATIONSHIP CROSSROADS:\n";
+                      std::cout << "[1] \"DEFINITELY! WHEN?\"\n";
+                      std::cout << "[2] \"MAYBE ANOTHER TIME\"\n";
+                      std::cout << "[3] \"NOT REALLY MY THING\"\n\n";
+
+                      int choice = promptInt(1, 3);
+
+                      if (choice == 1) {
+                          std::cout << "\nYou eagerly agree to join the hiking trip.\n";
+                          std::cout << "Alex's face lights up. \"Awesome! We leave Friday.\"\n";
+                          std::cout << "» Alex affinity: +15, Energy -20 (weekend plans locked)\n";
+                          std::cout << "» Fitness +5 (excitement gains)\n";
+                          rels.interactWith("Alex (Gym Crush)", 15);
+                          p.adjustEnergy(-20);
+                          p.adjustFitness(5);
+                      } else if (choice == 2) {
+                          std::cout << "\nYou politely decline but leave the door open for another time.\n";
+                          std::cout << "Alex nods, but you see the disappointment.\n";
+                          std::cout << "» Alex affinity: +3, Fitness +6\n";
+                          rels.interactWith("Alex (Gym Crush)", 3);
+                          p.adjustFitness(6);
+                      } else if (choice == 3) {
+                          std::cout << "\nYou admit hiking isn't really your thing.\n";
+                          std::cout << "Alex's expression goes cold. \"Cool. Whatever.\"\n";
+                          std::cout << "» Alex affinity: -10\n";
+                          rels.interactWith("Alex (Gym Crush)", -10);
+                      } else {
+                          std::cout << "\nInvalid choice. Alex shrugs and walks away.\n";
+                      }
+
+                      st.visitedGym = true;
+                  }},
+
+                 // Choice 2: Library Session
+                 {"Library session", "", {-20, 0, 0, 12, 0, 0},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "\n📚 LOCATION: LIBRARY 📚\n\n";
+                      std::cout << "Sam is surrounded by textbooks, looking more stressed than you've ever seen.\n";
+                      std::cout << "\"I'm stuck on this problem for HOURS. Do you have any idea how to do it?\"\n\n";
+
+                      if (p.academic > 70) {
+                          std::cout << "You solve it in minutes. Sam looks at you like you're a wizard.\n";
+                          std::cout << "\"I owe you one,\" Sam whispers, genuinely grateful.\n";
+                          std::cout << "» Sam affinity: +10, Academic +5\n";
+                          rels.interactWith("Sam (Study Buddy)", 10);
+                          p.adjustAcademic(5);
+                      } else if (p.academic < 50) {
+                          std::cout << "You're both stuck. Misery loves company.\n";
+                          std::cout << "\"We're in this together,\" Sam sighs.\n";
+                          std::cout << "» Sam affinity: +5, Academic -3 (shared frustration)\n";
+                          rels.interactWith("Sam (Study Buddy)", 5);
+                          p.adjustAcademic(-3);
+                      } else {
+                          std::cout << "You puzzle over the problem together and eventually find a solution.\n";
+                          std::cout << "» Sam affinity: +8, Academic +3\n";
+                          rels.interactWith("Sam (Study Buddy)", 8);
+                          p.adjustAcademic(3);
+                      }
+
+                      // Positive random event
+                      if (roll(0.30)) {
+                          std::cout << "\n🎁 BONUS DISCOVERY: Library Assistant Job Posting Spotted!\n";
+                          std::cout << "Apply now: Requires Academic > 60\n";
+                          if (p.academic > 60) {
+                              std::cout << "Your grades qualify you. You take the gig and earn some extra cash.\n";
+                              std::cout << "» Money +$50/week, Academic +5 weekly\n";
+                              p.adjustMoney(50);
+                              p.adjustAcademic(5);
+                          } else {
+                              std::cout << "The posting requires stronger academics than you currently have.\n";
                           }
-                      }},
-                     {"Academic push", "", {-25, 0, 0, 15, 0, 0},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          std::cout << "\n[LOCATION: Library Study Room]\n";
-                          std::cout << "Sam has reserved a study room for a focused afternoon session.\n";
-                          std::cout << "You work through problem sets together, trading tips and mnemonics.\n";
-                          st.metSam = true;
-                          rels.interactWith("Sam (Study Buddy)", 4);
+                      }
 
-                          // RANDOM EVENT - Positive: one-off tutor needed.
-                          if (roll(0.30)) {
-                              std::cout << "\n[RANDOM EVENT] A notice pops up: \"One-off tutor needed for an upcoming assignment\".\n";
-                              if (p.academic > 70) {
-                                  std::cout << "Your grades qualify you. You take the gig and earn some extra cash.\n";
-                                  p.adjustMoney(20);
-                              } else {
-                                  std::cout << "The tutor role requires higher grades than you currently have.\n";
-                              }
-                          }
-                      }},
-                     {"Networking lunch", "", {-10, 0, 12, 0, 0, -15},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          std::cout << "\n[LOCATION: Campus Cafe]\n";
-                          std::cout << "You join Riley during their lunch break, chatting over sandwiches and coffee.\n";
-                          st.metRiley = true;
+                      st.metSam = true;
+                  }},
 
-                          // Neutral random event: manager interview opportunity.
-                          std::cout << "RILEY: \"This is the friend I was telling you about – always productive and reliable.\"\n";
-                          std::cout << "MANAGER: \"We're looking for summer help. Interested in an interview?\"\n";
+                 // Choice 3: Look for Part-Time Work
+                 {"Look for part-time work", "", {-15, 0, 0, 0, 0, 0},
+                  [](GameState& st, Player& p, Relationships& rels) {
+                      std::cout << "\n💼 LOCATION: CAMPUS JOB BOARD 💼\n\n";
+                      std::cout << "Your bank account is screaming for help. The campus job board looks more appealing than ever.\n\n";
 
-                          if (p.social > 60) {
-                              std::cout << "You handle the impromptu interview smoothly and make a strong impression.\n";
+                      std::cout << "JOB OPPORTUNITIES:\n";
+                      std::cout << "[1] \"CAMPUS CAFE BARISTA\"\n";
+                      std::cout << "[2] \"LIBRARY ASSISTANT\"\n";
+                      std::cout << "[3] \"GYM ATTENDANT\"\n\n";
+
+                      int choice = promptInt(1, 3);
+
+                      if (choice == 1) {
+                          std::cout << "\nYou apply for the barista job. The manager appreciates your people skills.\n";
+                          std::cout << "» Money +$12/hour, Social +3 per shift\n";
+                          if (p.social > 40) {
+                              std::cout << "Riley might be your coworker!\n";
                               rels.interactWith("Riley (Barista)", 5);
-                              st.employed = true;
-                              p.adjustMoney(10);
-                          } else if (roll(0.30)) {
-                              std::cout << "\n[RANDOM EVENT] You arrive late and stumble through your answers.\n";
-                              std::cout << "Later, Riley tells you their manager questioned why they recommended you.\n";
-                              rels.interactWith("Riley (Barista)", -15);
-                              p.adjustSocial(-20);
+                              p.adjustMoney(12);
+                              p.adjustSocial(3);
+                          } else {
+                              std::cout << "You realize your social skills might not be strong enough for constant customer interaction yet.\n";
                           }
-                      }},
-                 }});
+                      } else if (choice == 2) {
+                          std::cout << "\nYou talk to the head librarian about the assistant position.\n";
+                          std::cout << "» Money +$15/hour, Academic +3 per shift\n";
+                          if (p.academic > 60) {
+                              std::cout << "Sam would basically be your neighbor.\n";
+                              rels.interactWith("Sam (Study Buddy)", 3);
+                              p.adjustMoney(15);
+                              p.adjustAcademic(3);
+                          } else {
+                              std::cout << "The library role demands academic excellence you haven't quite reached yet.\n";
+                          }
+                      } else if (choice == 3) {
+                          std::cout << "\nYou chat with the gym staff about helping out.\n";
+                          std::cout << "» Money +$10/hour, Fitness +3 per shift\n";
+                          if (p.fitness > 50) {
+                              std::cout << "Alex would see you in your natural habitat.\n";
+                              rels.interactWith("Alex (Gym Crush)", 5);
+                              p.adjustMoney(10);
+                              p.adjustFitness(3);
+                          } else {
+                              std::cout << "You decide to build up your fitness a bit more before applying for a gym role.\n";
+                          }
+                      } else {
+                          std::cout << "\nInvalid choice. You leave the job board empty-handed.\n";
+                      }
+
+                      st.employed = st.employed || false; // Preserve employment state if used elsewhere
+                  }},
+             }});
+
 
     s.push_back({3, 3, "Various",
-                 "Late afternoon. The summer heat is peaking. Time for...",
-                 {
-                     {"Cool gym workout", "", {-20, 0, 0, 0, 6, 0},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          st.visitedGym = true;
-                          rels.interactWith("Alex (Gym Crush)", 6);
-                          if (roll(0.25)) {
-                              std::cout << "AC breaks! Workout is brutal.\n";
-                              p.adjustEnergy(-15);
-                              p.adjustHealth(-3);
-                              p.adjustFitness(-3);
-                          }
-                      }},
-                     {"Focused study", "", {-20, 0, 0, 10, 0, 0},
-                      [](GameState&, Player&, Relationships& rels) {
-                          if (roll(0.5)) {
-                              rels.interactWith("Sam (Study Buddy)", 7);
-                          }
-                      }},
-                     {"Pool time", "", {-15, 0, 5, 0, 2, -8},
-                      [](GameState& st, Player& p, Relationships& rels) {
-                          st.metRiley = true;
-                          rels.interactWith("Riley (Barista)", 10);
-                          if (roll(0.35)) {
-                              std::cout << "Perfect summer afternoon at the pool.\n";
-                              p.adjustSocial(8);
-                              p.adjustHealth(5);
-                              p.adjustFitness(3);
-                          }
-                      }},
-                 }});
+             "The campus energy is shifting. Weekend plans are being made. The summer heat finally breaks with a cool breeze.",
+             {
+                 // Choice 1: Cool Gym Workout
+                 {"Cool gym workout", "", {-25, 8, 0, 0, 0, 0},
+ [](GameState& st, Player& p, Relationships& rels) {
+     (void)st; // Suppress unused parameter warning
+
+     std::cout << "💪 LOCATION: GYM 💪\n\n";
+     std::cout << "The gym AC is broken. It's a literal sauna in here.\n";
+     std::cout << "Alex is drenched but determined: \"Heat training builds character!\"\n\n";
+
+     std::cout << "HEAT ENDURANCE TEST:\n";
+     if (p.fitness > 60) { // Use 'p.fitness' instead of 'p.getFitness()'
+         std::cout << "\"YOU THRIVE!\"\n";
+         std::cout << "The heat makes you stronger. Alex is impressed.\n";
+         std::cout << "» Fitness +10, Alex affinity +8\n";
+         p.adjustFitness(10);
+         rels.interactWith("Alex (Gym Crush)", 8);
+     } else if (p.fitness < 50) { // Use 'p.fitness' instead of 'p.getFitness()'
+         std::cout << "\"YOU MELT.\"\n";
+         std::cout << "Should have gone to the pool. You feel like death.\n";
+         std::cout << "» Fitness -5, Health -8, Energy -20\n";
+         p.adjustFitness(-5);
+         p.adjustHealth(-8);
+         p.adjustEnergy(-20);
+     } else {
+         std::cout << "You manage to push through the heat without thriving or melting.\n";
+         std::cout << "» Fitness +8\n";
+         p.adjustFitness(8);
+     }
+ }},
+
+
+                 // Choice 2: Focused Study
+                 {"Focused study", "", {-22, 0, 0, 12, 0, 0},
+                  [](GameState& st, Player& p, Relationships& rels) {
+		     (void)st;
+                      std::cout << "📖 LOCATION: LIBRARY 📖\n\n";
+                      std::cout << "Sam leads you to a hidden corner of the library few students know about.\n";
+                      std::cout << "\"This is my secret spot. Don't tell anyone,\" Sam says.\n\n";
+
+                      std::cout << "STUDY SESSION MAGIC:\n";
+                      std::cout << "For the first time all summer, studying feels... peaceful.\n";
+                      std::cout << "» Academic +15, Sam affinity +10\n";
+                      std::cout << "» Energy efficiency +20% (perfect conditions)\n";
+                      p.adjustAcademic(15);
+                      rels.interactWith("Sam (Study Buddy)", 10);
+                      // Optional: Adjust energy efficiency if part of the mechanics
+                  }},
+
+                 // Choice 3: Pool Socializing
+                 {"Pool socializing", "", {-18, 0, 15, 0, 8, -12},
+                  [](GameState& st, Player& p, Relationships& rels) {
+(void)st;
+                      std::cout << "🏊 LOCATION: POOL 🏊\n\n";
+                      std::cout << "The pool is buzzing with energy. Riley spots you immediately.\n";
+                      std::cout << "\"Get in! The water's perfect and I brought snacks!\"\n\n";
+
+                      std::cout << "SUMMER BLISS:\n";
+                      std::cout << "This is what summer memories are made of - laughing with friends as the sun sets.\n";
+                      std::cout << "» Social +20, Health +8, Fitness +5\n";
+                      std::cout << "» Riley affinity +12, Money -$15\n";
+                      p.adjustSocial(20);
+                      p.adjustHealth(8);
+                      p.adjustFitness(5);
+                      p.adjustMoney(-15);
+                      rels.interactWith("Riley (Barista)", 12);
+                  }},
+             }});
+
+
 
     s.push_back({3, 4, "Dorm Room",
                  "Evening brings relief from the heat. Choose your wind down.",
@@ -1004,7 +1446,7 @@ std::vector<Scenario> buildScenarios()
                           Events::week4CompleteCollapseSick(p);
                       }},
                      {"Weekend prep", "", {-20, 3, 3, 3, 3, 0}, nullptr},
-                     {"Emergency measures", "Money -30, Energy +25, Health +15", {25, 15, 0, 0, 0, -30},
+                     {"Emergency measures", "", {25, 15, 0, 0, 0, -30},
                       [](GameState&, Player& p, Relationships&) {
                           // Week 4 random event: buyer's remorse.
                           Events::week4EmergencyMeasuresRemorse(p);
@@ -2369,7 +2811,7 @@ std::vector<Scenario> buildScenarios()
                             }
                             st.relationshipPath = "drama";
                         }},
-                       {"Skip party", "Avoidance path: stay in", {},
+                       {"Skip party", "", {},
                         [](GameState& st, Player& p, Relationships& rels) {
                             std::cout << "\nLOCATION: Dorm Room\n";
                             std::cout << "You stay in, resting instead of partying.\n";
