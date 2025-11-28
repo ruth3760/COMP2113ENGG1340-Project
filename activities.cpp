@@ -6,7 +6,7 @@ Activity::Activity(const std::string &n, int dur)
 {
 }
 
-void Activity::apply(Player &p) const
+void Activity::apply(Player &p) const 
 {
     p.adjustEnergy(energyChange);
     p.adjustHealth(healthChange);
@@ -44,3 +44,4 @@ Activity healthyMeal()
 }
 
 } // namespace Activities
+
