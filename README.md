@@ -1,90 +1,122 @@
+---
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
 # Summer Maxxing (Text-Based Mini-Game)
 
-A small, terminal-based life-sim for COMP2113/ENGG1340. You play through a 12-week summer break, balancing Energy, Health, Social, Academic, Fitness, and Money across 4 scenarios per week (48 scenarios total). Your choices affect stats, relationships, money flow, and the final ending you receive.
+A small, terminal-based life-sim for COMP2113/ENGG1340.
+You play through a summer break, balancing Energy, Health, Social, Academic, Fitness, and Money.
 
-## What's Here (current state)
-- Stats system: Energy, Health, Social, Academic, Fitness, Money
-- Time system: 12 weeks - 4 scenarios per week (48 scenarios)
-- Interactive scenarios with choices at each time slot
-- Location-based activities: sleep, workouts, meals, study sessions, side hustle, social events
-- Random weekly and special events: small pool of positive/negative/path-based events
-- Relationships container: simple NPC list with affinity (Alex, Sam, Riley, Jordan, etc.)
-- Save/Load: plain text file (`savegame.txt`)
-- Difficulty selection: Easy / Medium / Hard with different starting stats and decay
-- Multi-file C++ project: headers and sources split by module
+## Team Members
+
+Venkata Sai Ruthvik Reddy NELLORE 3036384713 (ruth3760)
+
+Matthew Chow SMITHSEREE 3036452338 (MatthewSmithseree)
+
+Grace Yuhan Pui 3036136893 (gp13-dot)
+
+Ingram BUDIANTO 3036440866 (IngramBudianto123)
+
+*NOTE: Our GitHub contributions may not provide an accurate representation of individual contributions as we frequently exchanged devices. We all contributed equally in various aspects beyond coding, such as video editing, ideation, and testing, which are not fully reflected in GitHub.*
+
+## Game Rules
+
+Summer Maxxing is a life simulation game where you take on the role of a college student navigating the highs and lows of summer break.
+With 8 weeks of freedom, you’ll make choices that shape your relationships, health, academics, fitness, and finances.
+The scenarios are inspired by daily, real struggles of college students, and your decisions will decide not only your experience this summer, but also for the following semester, and perhaps your future.
+So balance your stats, manage your time wisely, and make the most of your summer to achieve your goals.
+
+This game is a blend of strategy, life simulation, and storytelling.
+You’ll face random events, relationship drama, and tough choices that test your ability to manage resources and relationships.
+With multiple endings and paths to explore, every summer tells a unique story.
+Will you thrive or barely survive?
+
+### Key Stats
+
+Energy (0–100): Represents your ability to complete activities.
+If it falls to 0, you’ll collapse from exhaustion, and it’s Game Over.
+
+Health (0–100): Stay healthy by eating well, sleeping enough, and avoiding stress.
+If it drops to 0, you’ll face a medical emergency, and it’s Game Over.
+
+Social (0–100): Build relationships with friends (or more than friends?).
+
+Academic (0–100): Some argue this is bare minimum for a college student...
+So stay on top of your summer courses?
+
+Fitness (0–100): Work on your summer bod!
+
+Money (\$0–∞): Earn and spend wisely.
+Running out of money leads to financial ruin and Game Over.
+
+### How to Play
+
+-   Each week has 4 scenarios, representing different time slots in your day (morning, afternoon, evening, and night).
+-   For each scenario, you’ll choose from several activities that impact your stats and relationships.
+-   Random events will occur! So don't think you've got it all figured out.
+-   At the end of each week, your stats will decay slightly to reflect the toll of summer.
+-   At the end of the game, your final stats will determine your summer’s outcome! There are multiple endings to discover with a special ending for players who master the art of balance and community building.
 
 ## How to Build & Run
 
-Linux (Academy server / recommended):
-```
+To compile and run the game, run the following command onto the command line:
+
+```         
 make
 ./summer_maxxing
 ```
 
-Windows (PowerShell, MSYS2 g++ installed):
-```
-g++ -std=c++17 main.cpp player.cpp relationships.cpp events.cpp activities.cpp savegame.cpp -o summer_maxxing.exe
-./summer_maxxing.exe
-```
+## Features implemented
 
-If `make` isn't available on your system, just use the direct `g++` command above.
+-   **Generation of Random Game Sets or Events**:\
+    Our game incorporates randomization to create dynamic and unpredictable gameplay experiences, including
 
-On the Academy server (without `make`), you can also run:
-```
-g++ -std=c++17 main.cpp player.cpp relationships.cpp events.cpp activities.cpp savegame.cpp -o summer_maxxing
-./summer_maxxing
-```
+    -   **Trivia mini-games**: Trivia questions are randomly selected from a pool of questions to ensure variety in each playthrough.
 
-## Files & Structure
-- `main.cpp`: game loop (12 weeks - 4 scenarios), difficulty selection, endings
-- `player.h/.cpp`: player stats, adjust/clamp/print
-- `events.h/.cpp`: random weekly/special events + roll logic
-- `activities.h/.cpp`: activities and their stat effects
-- `relationships.h/.cpp`: NPC storage + affinity tracking
-- `savegame.h/.cpp`: save/load to text file
-- `Makefile`: Linux build convenience (optional)
+    -   **Random Events**: Between scenarios, random events are triggered that can have positive, negative, or neutral outcomes, impacting player stats and relationships.
 
-## Features & Coding Elements
-This project is designed to satisfy the COMP2113/ENGG1340 coding requirements:
+-   **Data Structures for Storing Game Status**
 
-1. **Generation of random events**
-   - Weekly and special events are defined in `events.h/.cpp` and triggered from `main.cpp`.
-   - Each event has a probability and an effect on player stats/relationships.
+    -   The game uses various data structures such as maps, vectors, structs, and lists, to manage and store the player's progress and stats
 
-2. **Data structures for storing data**
-   - `Player` class (`player.*`) stores core stats and money.
-   - `Relationships` and `NPC` (`relationships.*`) use `std::vector` to track multiple characters and affinities.
-   - Scenario flow uses `Scenario` and `Choice` structs in `main.cpp` with `std::vector` containers.
+-   **Dynamic Memory Management**
 
-3. **Dynamic memory management**
-   - Dynamic storage is handled via STL containers (`std::vector`, `std::string`, `std::map`) instead of manual `new/delete`.
-   - These are used for NPC lists, scenarios, choices, and event collections.
+    -   The game features efficient use of dynamic memory to handle gameplay elements and ensure smooth performance.
+        Trivia questions, random events, and character dialogue are dynamically loaded into memory only when required, reducing unnecessary memory usage.
+        Player stats and progress are updated dynamically during gameplay, ensuring real-time tracking without overloading the system.
 
-4. **File input/output**
-   - `savegame.h/.cpp` implement saving and loading of player stats, current week, and scenario index to/from `savegame.txt` using file streams.
-   - A clear function is provided to remove the save file when starting fresh.
+-   **File Input/Output (e.g., for Loading/Saving Game Status)**
 
-5. **Program codes in multiple files**
-   - Logic is split into multiple modules: `main.cpp`, `player.*`, `events.*`, `activities.*`, `relationships.*`, `savegame.*`, and `Makefile`.
+    -   The game implements a file management system to handle data efficiently.
+        Player progress, including stats, relationships, and completed scenarios, is saved to a file, enabling players to resume their game seamlessly.
+        Logs of random events and player decisions are stored in files for debugging purposes or storytelling enhancements.
 
-6. **Multiple difficulty levels**
-   - Difficulty selection (Easy / Medium / Hard) is implemented in `main.cpp` via `DifficultySettings` and `chooseDifficulty`.
-   - Each mode changes starting stats, money, weekly decay, allowances, and penalties (e.g. weekly remittance in Hard).
+-   **Proper Indentation and Naming Styles**
 
-## Roadmap (short)
-- Add more UI polish and additional menu shortcuts
-- Expand event pool and location-specific activities
-- Add more end-of-summer summaries/endings
+    -   The game adheres to consistent coding practices to ensure readability and maintainability.
 
-## Game Description (for report)
-- **Game type**: Text-based life-sim / RPG set during a university summer break.
-- **Core loop**: For each of 12 weeks, play through 4 scenarios and choose one action per scenario (study, work out, socialize, rest, etc.).
-- **Goal**: Finish summer with the best possible combination of stats (Energy/Health/Social/Academic/Fitness/Money) and get a good ending.
-- **Systems**: Time management, random events, simple relationships, and difficulty-based stat decay.
+-   **Multiple Difficulty Levels**
 
-## Team
-- TODO: Add team member names, student numbers, and GitHub IDs here before submission.
+    -   Players can choose from three difficulty levels at the start of the game: **Easy** (Lower stat decay and more resources), **Medium (**Balanced gameplay with standard challenges), and **Hard** (Higher stat decay, limited resources, and additional financial obligations)
 
-## Notes
-- No non-standard runtime libraries are required. Only the C++17 standard library is used.
-- The project should compile on the Academy server with the provided `g++` command.
+-   **Program Codes in Multiple Files**
+
+    -   The game is modularized into multiple files for better readability and maintainability:
+
+        -   `main.cpp`: Contains the main game plot and integrates all components.
+
+        -   `player.cpp` and `player.h`: Manages player stats and functionality.
+
+        -   `relationships.cpp` and `relationships.h`: Handles relationship management.
+
+        -   `events.cpp` and `events.h`: Manages random events and outcomes.
+
+        -   `activities.cpp` and `activities.h`: Implements mini-games and player activities.
+
+        -   `savegame.cpp` and `savegame.h`: Manages saving and loading game progress.
+
+## **List of Non-standard C++ Libraries**
+
+N/A
