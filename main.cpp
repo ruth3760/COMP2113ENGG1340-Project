@@ -1586,24 +1586,131 @@ s.push_back({2, 1, "Dorm Room",
 
 
     s.push_back({4, 4, "Dorm Room",
-                 "Friday night. You're drained. Choose recovery.",
-                 {
-                     {"Complete collapse", "", {40, 10, 0, 0, 0, 0},
-                     [](GameState&, Player& p, Relationships&) {
-                          if (p.health < 40) {
-                              p.adjustHealth(15);
-                              p.adjustEnergy(20);
-                          }
-                          // Week 4 random event: wake up sick anyway.
-                          Events::week4CompleteCollapseSick(p);
-                      }},
-                     {"Weekend prep", "", {-20, 3, 3, 3, 3, 0}, nullptr},
-                     {"Emergency measures", "", {25, 15, 0, 0, 0, -30},
-                      [](GameState&, Player& p, Relationships&) {
-                          // Week 4 random event: buyer's remorse.
-                          Events::week4EmergencyMeasuresRemorse(p);
-                      }},
-                 }});
+             "🛌 THE AFTERMATH 🛌\n\n"
+             "The week is over. The damage is done. All that's left is to pick up the pieces.\n\n"
+             "SURVIVAL MODE:",
+             {
+                 // Choice 1: Complete Collapse - Hibernate
+                 {"Complete collapse - hibernate", "", {45, 15, 0, 0, 0, 0},
+                  [](GameState& st, Player& p, Relationships&) {
+                      (void)st; // Suppress unused parameter warning
+                      std::cout << "\n😴 HIBERNATION MODE ACTIVATED 😴\n\n";
+                      std::cout << "You don't just sleep - you enter a coma. The world disappears.\n";
+
+                      if (p.health < 35) {
+                          std::cout << "\nYour body desperately needed this. The healing is almost audible.\n";
+                          std::cout << "» Health +25 bonus, Energy +30 bonus\n";
+                          p.adjustHealth(25);
+                          p.adjustEnergy(30);
+                      } else if (p.energy < 45 || p.social < 45 || p.academic < 45 || p.fitness < 45) {
+                          std::cout << "\nThe week broke you in ways sleep can't fix, but it's a start.\n";
+                          std::cout << "» All stats +3 (wisdom from suffering)\n";
+                          p.adjustEnergy(3);
+                          p.adjustHealth(3);
+                          p.adjustSocial(3);
+                          p.adjustAcademic(3);
+                          p.adjustFitness(3);
+                      }
+
+                      // Random Event: Recovery Roulette
+                      if (roll(0.30)) {
+                          std::cout << "\n🎲 RECOVERY ROULETTE: WAKE UP WORSE SOMEHOW!\n";
+                          std::cout << "The damage was too deep. The rest wasn't enough.\n";
+                          std::cout << "» Health -15, Energy -20\n";
+                          p.adjustHealth(-15);
+                          p.adjustEnergy(-20);
+                      }
+                  }},
+
+                 // Choice 2: Weekend Prep - Damage Control
+                 {"Weekend prep - damage control", "", {-25, 4, 4, 4, 4, 0},
+                  [](GameState& st, Player& p, Relationships&) {
+                      (void)st; // Suppress unused parameter warning
+                      std::cout << "\n📝 STRATEGIC RECOVERY 📝\n\n";
+                      std::cout << "You map out the weekend with military precision. Every hour accounted for.\n";
+
+                      if (p.energy < 40 || p.health < 40 || p.social < 40 || p.academic < 40 || p.fitness < 40) {
+                          std::cout << "\nYou identify the critical failures and plan targeted recovery.\n";
+                          std::cout << "» That stat +10 by week's end\n";
+                          if (p.energy < 40) p.adjustEnergy(10);
+                          if (p.health < 40) p.adjustHealth(10);
+                          if (p.social < 40) p.adjustSocial(10);
+                          if (p.academic < 40) p.adjustAcademic(10);
+                          if (p.fitness < 40) p.adjustFitness(10);
+                      } else if (p.energy > 65 && p.health > 65 && p.social > 65 &&
+                                 p.academic > 65 && p.fitness > 65) {
+                          std::cout << "\nSomehow, against all odds, you're still standing. The plan is maintenance, not repair.\n";
+                          std::cout << "» All stats +2\n";
+                          p.adjustEnergy(2);
+                          p.adjustHealth(2);
+                          p.adjustSocial(2);
+                          p.adjustAcademic(2);
+                          p.adjustFitness(2);
+                      }
+
+                      // Random Event: Planning Payoff
+                      if (roll(0.60)) {
+                          std::cout << "\n🎲 PLANNING PAYOFF: PERFECT SCHEDULE CREATED!\n";
+                          std::cout << "For the first time, you feel like you might actually survive summer.\n";
+                          std::cout << "» Next week's efficiency +25%, Energy +15\n";
+                          p.adjustEnergy(15);
+                          // Optional: Apply a global efficiency boost if mechanics allow.
+                      }
+                  }},
+
+                 // Choice 3: Emergency Measures - Throw Money at Problems
+                 {"Emergency measures - throw money at problems", "", {30, 20, 0, 0, 0, -40},
+                  [](GameState& st, Player& p, Relationships&) {
+                      (void)st; // Suppress unused parameter warning
+                      std::cout << "\n💸 CAPITALIST SOLUTIONS 💸\n\n";
+                      std::cout << "Money can't buy happiness, but it can buy temporary relief.\n\n";
+
+                      std::cout << "QUICK FIXES:\n";
+                      std::cout << "[1] \"GOURMET FOOD DELIVERY\"\n";
+                      std::cout << "[2] \"ENERGY DRINKS & SUPPLEMENTS\"\n";
+                      std::cout << "[3] \"ENTERTAINMENT ESCAPE\"\n\n";
+
+                      int choice = promptInt(1, 3);
+
+                      if (choice == 1) {
+                          std::cout << "\nYou splurge on gourmet food delivery. The food is incredible.\n";
+                          std::cout << "The credit card bill will be less so.\n";
+                          std::cout << "» Money -$55, Health +18, Energy +20\n";
+                          p.adjustMoney(-55);
+                          p.adjustHealth(18);
+                          p.adjustEnergy(20);
+                      } else if (choice == 2) {
+                          std::cout << "\nYou load up on energy drinks and supplements.\n";
+                          std::cout << "The heart palpitations are probably fine. Probably.\n";
+                          std::cout << "» Money -$45, Energy +35, Health -15 (next day crash)\n";
+                          p.adjustMoney(-45);
+                          p.adjustEnergy(35);
+                          p.adjustHealth(-15);
+                      } else if (choice == 3) {
+                          std::cout << "\nYou escape into mindless entertainment.\n";
+                          std::cout << "Three hours of streaming later, you feel... emptier but distracted.\n";
+                          std::cout << "» Money -$25, Social +10, Academic -5\n";
+                          p.adjustMoney(-25);
+                          p.adjustSocial(10);
+                          p.adjustAcademic(-5);
+                      } else {
+                          std::cout << "\nInvalid choice. You hesitate and miss your chance.\n";
+                      }
+
+                      // Random Event: Buyer's Remorse
+                      if (roll(0.50)) {
+                          std::cout << "\n🎲 BUYER'S REMORSE HITS!\n";
+                          std::cout << "That money could have paid for actual therapy.\n";
+                          std::cout << "» All stats -3, Additional Money -$20 (impulse buys)\n";
+                          p.adjustEnergy(-3);
+                          p.adjustHealth(-3);
+                          p.adjustSocial(-3);
+                          p.adjustAcademic(-3);
+                          p.adjustFitness(-3);
+                          p.adjustMoney(-20);
+                      }
+                  }},
+             }});
 
     // Week 5
     s.push_back({5, 1, "Dorm Room",
