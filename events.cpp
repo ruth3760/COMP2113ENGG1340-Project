@@ -75,8 +75,8 @@ void maybeRunWeek1RandomEvent(
         EventSpacing spacing;
         std::cout << "\n[RANDOM EVENT] Your phone rings - it's an old high school friend!\n";
         std::cout << "FRIEND: \"Hey! I'm in town for the weekend and heard you're staying on campus. Want to catch up tomorrow?\"\n";
-        std::cout << "  1) Accept the invite (Social +10, Money -10, Academic -3)\n";
-        std::cout << "  2) Decline and stay focused (Social -3)\n";
+        std::cout << "  1) Accept the invite\n";
+        std::cout << "  2) Decline and stay focused\n";
         int choice = promptInt(1, 2);
         if (choice == 1) {
             player.adjustSocial(10);
@@ -107,9 +107,9 @@ void maybeRunWeek1RandomEvent(
         EventSpacing spacing;
         std::cout << "\n[RANDOM EVENT] Evening approaches. Your phone buzzes with group chat notifications.\n";
         std::cout << "You decide to...\n";
-        std::cout << "  1) Play video games (Energy -10, Social +5, Academic -2)\n";
-        std::cout << "  2) Study for your summer course (Energy -20, Academic +15)\n";
-        std::cout << "  3) Go to bed early (Energy +35, \"Well-rested for tomorrow\")\n";
+        std::cout << "  1) Play video games\n";
+        std::cout << "  2) Study for your summer course\n";
+        std::cout << "  3) Go to bed early\n";
         int choice = promptInt(1, 3);
         if (choice == 1) {
             player.adjustEnergy(-10);
@@ -279,8 +279,8 @@ void runWeekEndRandomEvents(
             if (rollProbability(0.25)) {
                 EventSpacing spacing;
                 std::cout << "\n[WEEK 7 EVENT] MINOR ARGUMENT WITH PARTNER.\n";
-                std::cout << "1. Resolve quickly (Affinity +5, Social +5)\n";
-                std::cout << "2. Ignore it (Affinity -10, Energy +10)\n";
+                std::cout << "1. Resolve quickly\n";
+                std::cout << "2. Ignore it\n";
                 int choice = promptInt(1, 2);
                 if (choice == 1) {
                     rels.interactWith(partnerName, 5);
@@ -296,8 +296,8 @@ void runWeekEndRandomEvents(
                 EventSpacing spacing;
                 std::cout << "\n[WEEK 7 EVENT] NEW FRIEND GROUP INVITE.\n";
                 std::cout << "A new friend group invites you to hang out.\n";
-                std::cout << "1. Join them (Social +12, Random affinity +8, Energy -15)\n";
-                std::cout << "2. Decline (Social -5, Energy +10)\n";
+                std::cout << "1. Join them \n";
+                std::cout << "2. Decline\n";
                 int choice = promptInt(1, 2);
                 if (choice == 1) {
                     player.adjustSocial(12);
@@ -370,8 +370,8 @@ void runWeekEndRandomEvents(
             if (rollProbability(0.25)) {
                 EventSpacing spacing;
                 std::cout << "\n[WEEK 8 EVENT] PARTNER WANTS TO TALK ABOUT THE FUTURE.\n";
-                std::cout << "1. Engage with the conversation (Affinity +15, Academic +5)\n";
-                std::cout << "2. Dodge the topic (Affinity -10, Energy +10)\n";
+                std::cout << "1. Engage with the conversation\n";
+                std::cout << "2. Dodge the topic\n";
                 int choice = promptInt(1, 2);
                 if (choice == 1) {
                     rels.interactWith(partnerName, 15);
@@ -386,8 +386,8 @@ void runWeekEndRandomEvents(
             if (rollProbability(0.25)) {
                 EventSpacing spacing;
                 std::cout << "\n[WEEK 8 EVENT] LAST-MINUTE FRIEND TRIP INVITE.\n";
-                std::cout << "1. Join the trip (Social +15, Money -$40, Energy -20)\n";
-                std::cout << "2. Decline and rest (Social -5, Energy +15)\n";
+                std::cout << "1. Join the trip\n";
+                std::cout << "2. Decline and rest\n";
                 int choice = promptInt(1, 2);
                 if (choice == 1) {
                     player.adjustSocial(15);
