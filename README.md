@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: sentence
----
-
 # Summer Maxxing (Text-Based Mini-Game)
 
 A small, terminal-based life-sim for COMP2113/ENGG1340.
@@ -72,8 +66,6 @@ make
 
 -   **Generation of Random Game Sets or Events**:\
     Our game incorporates randomization to create dynamic and unpredictable gameplay experiences, including
-
-    -   **Trivia mini-games**: Trivia questions are randomly selected from a pool of questions to ensure variety in each playthrough.
 
     -   **Random Events**: Between scenarios, random events are triggered that can have positive, negative, or neutral outcomes, impacting player stats and relationships.
 
